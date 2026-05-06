@@ -1,0 +1,1612 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chispla · Track 01 Inclusión Financiera</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --bg-card: #141414;
+    --bg-card-hover: #1c1c1c;
+    --border: #262626;
+    --border-hot: #f97316;
+    --text: #fafafa;
+    --text-dim: #a3a3a3;
+    --text-muted: #737373;
+    --orange: #f97316;
+    --orange-soft: #fb923c;
+    --orange-bg: rgba(249, 115, 22, 0.08);
+    --green: #22c55e;
+    --red: #ef4444;
+    --blue: #3b82f6;
+    --purple: #a855f7;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    padding: 0;
+  }
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 20px 32px;
+    position: sticky;
+    top: 0;
+    background: rgba(10,10,10,0.95);
+    backdrop-filter: blur(8px);
+    z-index: 50;
+  }
+  .header-row { display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+  .brand { display: flex; align-items: baseline; gap: 12px; }
+  .brand h1 { font-size: 18px; font-weight: 600; letter-spacing: -0.01em; }
+  .brand .sep { color: var(--text-muted); }
+  .brand .track { color: var(--orange); font-weight: 500; font-size: 14px; }
+  .countdowns { display: flex; gap: 14px; flex-wrap: wrap; }
+  .countdown {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 12px;
+  }
+  .countdown.hot { border-color: var(--orange); background: var(--orange-bg); }
+  .countdown .label { color: var(--text-muted); display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 2px; }
+  .countdown .value { font-variant-numeric: tabular-nums; font-weight: 600; font-size: 13px; }
+  main { max-width: 1400px; margin: 0 auto; padding: 32px; }
+  .section { margin-bottom: 56px; }
+  .section-head { margin-bottom: 20px; }
+  .section-head h2 { font-size: 22px; font-weight: 600; letter-spacing: -0.01em; margin-bottom: 4px; }
+  .section-head p { color: var(--text-dim); font-size: 14px; }
+  .grid { display: grid; gap: 16px; }
+  .grid-2 { grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); }
+  .grid-3 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+  .grid-4 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .card:hover { border-color: #333; }
+  .card.hot { border-color: var(--orange); background: var(--orange-bg); }
+  .card h3 { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+  .card .meta { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px; }
+  .card p { font-size: 14px; color: var(--text-dim); }
+  .card ul { list-style: none; }
+  .card ul li { font-size: 13px; color: var(--text-dim); padding: 4px 0; padding-left: 16px; position: relative; }
+  .card ul li::before { content: "·"; color: var(--orange); position: absolute; left: 0; font-weight: bold; }
+  .pill {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 500;
+    background: var(--border);
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .pill.orange { background: var(--orange-bg); color: var(--orange); }
+  .pill.green { background: rgba(34,197,94,0.1); color: var(--green); }
+  .pill.red { background: rgba(239,68,68,0.1); color: var(--red); }
+  .pill.blue { background: rgba(59,130,246,0.1); color: var(--blue); }
+  .rubrica-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); }
+  .rubrica-row:last-child { border-bottom: none; }
+  .rubrica-criterion { display: flex; align-items: center; gap: 14px; }
+  .rubrica-criterion .num { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 13px; }
+  .rubrica-row .name { font-weight: 500; font-size: 14px; }
+  .rubrica-row .desc { font-size: 12px; color: var(--text-muted); }
+  .rubrica-row .weight { font-variant-numeric: tabular-nums; font-weight: 600; font-size: 16px; }
+  .gates-list { display: grid; gap: 10px; }
+  .gate {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 14px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .gate .icon { color: var(--red); font-size: 16px; line-height: 1.4; flex-shrink: 0; }
+  .gate .text { font-size: 13px; color: var(--text-dim); }
+  .gate .text strong { color: var(--text); }
+  .deliverable {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+    border-left: 3px solid var(--orange);
+  }
+  .deliverable .when { font-size: 11px; color: var(--orange); text-transform: uppercase; letter-spacing: 0.04em; font-weight: 600; margin-bottom: 4px; }
+  .deliverable h4 { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+  .deliverable p { font-size: 13px; color: var(--text-dim); }
+  .opt-card {
+    position: relative;
+    cursor: pointer;
+  }
+  .opt-card.selected { border-color: var(--orange); background: var(--orange-bg); }
+  .opt-card .opt-letter {
+    width: 32px; height: 32px;
+    background: var(--orange);
+    color: var(--bg);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+  .opt-card h3 { font-size: 17px; margin-bottom: 6px; }
+  .opt-card .tagline { font-size: 13px; color: var(--orange-soft); margin-bottom: 12px; font-style: italic; }
+  .opt-card .field { margin-bottom: 10px; }
+  .opt-card .field-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 2px; }
+  .opt-card .field-value { font-size: 13px; color: var(--text-dim); }
+  .opt-card .score-row { display: flex; align-items: center; justify-content: space-between; font-size: 12px; padding: 4px 0; color: var(--text-dim); }
+  .opt-card .score-bar { display: inline-block; width: 80px; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; margin-left: 8px; vertical-align: middle; }
+  .opt-card .score-fill { height: 100%; background: var(--orange); }
+  .opt-card .total { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 14px; }
+  .vote-row { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+  .vote-btn {
+    background: var(--border);
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .vote-btn:hover { background: var(--bg-card-hover); color: var(--text); }
+  .vote-btn.active { background: var(--orange); color: var(--bg); border-color: var(--orange); font-weight: 600; }
+  .segments-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+  .segment-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .segment-card:hover { border-color: var(--orange); }
+  .segment-card.selected { border-color: var(--orange); background: var(--orange-bg); }
+  .segment-card .emoji { font-size: 28px; margin-bottom: 6px; display: block; }
+  .segment-card h4 { font-size: 14px; margin-bottom: 4px; }
+  .segment-card p { font-size: 12px; color: var(--text-muted); }
+  .channels-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; }
+  .channel-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .channel-card:hover { border-color: var(--orange); }
+  .channel-card.selected { border-color: var(--orange); background: var(--orange-bg); }
+  .channel-card .code { font-family: monospace; font-size: 11px; color: var(--orange); }
+  .channel-card h4 { font-size: 14px; margin: 4px 0; }
+  .channel-card p { font-size: 12px; color: var(--text-muted); }
+  .vp-builder {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+  }
+  .vp-template { font-size: 18px; line-height: 1.7; color: var(--text-dim); }
+  .vp-template input {
+    background: transparent;
+    border: none;
+    border-bottom: 1px dashed var(--orange);
+    color: var(--orange);
+    font: inherit;
+    padding: 2px 6px;
+    min-width: 120px;
+    outline: none;
+    font-style: italic;
+  }
+  .vp-template input:focus { border-bottom: 1px solid var(--orange); background: var(--orange-bg); }
+  .vp-output {
+    margin-top: 24px;
+    padding: 18px;
+    background: var(--bg);
+    border: 1px solid var(--orange);
+    border-radius: 10px;
+    color: var(--text);
+    font-size: 16px;
+    line-height: 1.6;
+    font-style: italic;
+    display: none;
+  }
+  .vp-output.visible { display: block; }
+  .checklist { display: grid; gap: 8px; }
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 14px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .check-item:hover { border-color: #333; }
+  .check-item.done { border-color: var(--green); background: rgba(34,197,94,0.05); }
+  .check-item.done .check-text { text-decoration: line-through; color: var(--text-muted); }
+  .check-box {
+    width: 18px; height: 18px;
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    margin-top: 1px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg);
+    transition: all 0.15s;
+  }
+  .check-item.done .check-box { background: var(--green); border-color: var(--green); }
+  .check-box::after { content: "✓"; font-size: 12px; color: var(--bg); display: none; font-weight: bold; }
+  .check-item.done .check-box::after { display: block; }
+  .check-text { font-size: 14px; color: var(--text-dim); }
+  .check-item.done .check-text { color: var(--text-muted); }
+  .check-owner { font-size: 11px; padding: 2px 8px; border-radius: 4px; background: var(--border); color: var(--text-dim); margin-left: auto; flex-shrink: 0; }
+  .timeline-day {
+    margin-bottom: 24px;
+  }
+  .timeline-day-header {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .timeline-day-header h3 { font-size: 17px; }
+  .timeline-day-header .date { color: var(--text-muted); font-size: 13px; }
+  .timeline-events { display: grid; gap: 6px; }
+  .timeline-event {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    gap: 12px;
+    padding: 8px 0;
+    font-size: 13px;
+  }
+  .timeline-event.critical { color: var(--orange); font-weight: 600; }
+  .timeline-event.tu-track { color: var(--text); border-left: 2px solid var(--orange); padding-left: 10px; margin-left: -12px; }
+  .timeline-event .time { color: var(--text-muted); font-variant-numeric: tabular-nums; font-size: 12px; }
+  .timeline-event.tu-track .time { color: var(--orange); }
+  .timeline-event .what { color: var(--text-dim); }
+  .timeline-event.critical .what { color: var(--orange); font-weight: 600; }
+  .timeline-event.tu-track .what { color: var(--text); font-weight: 500; }
+  footer { padding: 32px; text-align: center; color: var(--text-muted); font-size: 12px; border-top: 1px solid var(--border); margin-top: 64px; }
+  .chart-wrap { position: relative; height: 280px; }
+  .stat-row { display: flex; gap: 24px; flex-wrap: wrap; margin-top: 10px; }
+  .stat { text-align: left; }
+  .stat .num { font-size: 24px; font-weight: 700; color: var(--orange); font-variant-numeric: tabular-nums; }
+  .stat .lbl { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+  .toggle-section { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .toggle-btn {
+    background: var(--bg-card);
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 14px;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .toggle-btn.active { background: var(--orange); color: var(--bg); border-color: var(--orange); font-weight: 600; }
+  .reset-btn {
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 11px;
+    cursor: pointer;
+    margin-left: 8px;
+  }
+  .reset-btn:hover { color: var(--text); border-color: var(--text-muted); }
+  @media (max-width: 768px) {
+    main { padding: 20px; }
+    header { padding: 16px 20px; }
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  }
+
+  /* === WAR ROOM MODE — segunda pantalla / proyector / juego === */
+  body { font-size: 22px; }
+  main { max-width: 1900px; padding: 56px; }
+  header { padding: 28px 56px; }
+  .brand h1 { font-size: 32px; }
+  .brand .track { font-size: 22px; font-weight: 600; }
+  .brand .sep { font-size: 26px; }
+  .countdown { padding: 14px 22px; border-width: 2px; }
+  .countdown .label { font-size: 13px; margin-bottom: 6px; letter-spacing: 0.06em; }
+  .countdown .value { font-size: 22px; font-weight: 700; }
+  .countdown.hot { box-shadow: 0 0 24px rgba(249, 115, 22, 0.25); }
+  .section { margin-bottom: 96px; }
+  .section-head { margin-bottom: 36px; }
+  .section-head h2 { font-size: 44px; margin-bottom: 10px; letter-spacing: -0.025em; line-height: 1.15; }
+  .section-head p { font-size: 21px; line-height: 1.5; }
+  .card { padding: 36px; border-radius: 18px; border-width: 2px; }
+  .card.hot { box-shadow: 0 0 40px rgba(249, 115, 22, 0.18); }
+  .card h3 { font-size: 30px; margin-bottom: 16px; line-height: 1.25; }
+  .card .meta { font-size: 14px; margin-bottom: 8px; letter-spacing: 0.08em; }
+  .card p { font-size: 20px; line-height: 1.6; }
+  .card ul li { font-size: 19px; padding: 8px 0 8px 22px; line-height: 1.5; }
+  .card ul li::before { font-size: 22px; top: 6px; }
+  .pill { font-size: 14px; padding: 6px 16px; }
+  .rubrica-row { padding: 22px 0; }
+  .rubrica-row .name { font-size: 22px; font-weight: 600; }
+  .rubrica-row .desc { font-size: 18px; margin-top: 2px; }
+  .rubrica-row .weight { font-size: 30px; font-weight: 700; }
+  .rubrica-criterion { gap: 22px; }
+  .rubrica-criterion .num { width: 46px; height: 46px; font-size: 20px; font-weight: 700; }
+  .chart-wrap { height: 460px; }
+  .gate { padding: 22px 26px; gap: 18px; border-width: 2px; }
+  .gate .icon { font-size: 26px; }
+  .gate .text { font-size: 20px; line-height: 1.5; }
+  .deliverable { padding: 28px 30px; border-left-width: 5px; }
+  .deliverable .when { font-size: 15px; margin-bottom: 8px; letter-spacing: 0.08em; }
+  .deliverable h4 { font-size: 26px; margin-bottom: 12px; }
+  .deliverable p { font-size: 19px; line-height: 1.6; }
+  .opt-card { cursor: pointer; }
+  .opt-card .opt-letter { width: 64px; height: 64px; font-size: 38px; margin-bottom: 22px; border-radius: 16px; }
+  .opt-card h3 { font-size: 32px; margin-bottom: 10px; }
+  .opt-card .tagline { font-size: 19px; margin-bottom: 22px; line-height: 1.4; }
+  .opt-card .field { margin-bottom: 16px; }
+  .opt-card .field-label { font-size: 13px; letter-spacing: 0.08em; margin-bottom: 4px; }
+  .opt-card .field-value { font-size: 18px; line-height: 1.55; }
+  .opt-card .field-value a { word-break: break-all; }
+  .opt-card .score-row { font-size: 18px; padding: 8px 0; }
+  .opt-card .score-bar { width: 120px; height: 6px; }
+  .opt-card .total { font-size: 22px; margin-top: 18px; padding-top: 18px; font-weight: 700; }
+  .vote-btn { font-size: 17px; padding: 12px 22px; border-radius: 10px; font-weight: 600; }
+  .vote-btn.active { box-shadow: 0 0 20px rgba(249, 115, 22, 0.4); }
+  .vote-row { gap: 12px; margin-top: 22px; }
+  .segments-grid { gap: 18px; }
+  .segment-card { padding: 28px; border-radius: 14px; border-width: 2px; }
+  .segment-card .emoji { font-size: 56px; margin-bottom: 14px; }
+  .segment-card h4 { font-size: 22px; margin-bottom: 8px; line-height: 1.3; }
+  .segment-card p { font-size: 17px; line-height: 1.5; }
+  .channels-grid { gap: 16px; }
+  .channel-card { padding: 22px 26px; border-radius: 12px; border-width: 2px; }
+  .channel-card .code { font-size: 14px; font-weight: 700; letter-spacing: 0.1em; }
+  .channel-card h4 { font-size: 22px; margin: 8px 0; }
+  .channel-card p { font-size: 17px; line-height: 1.5; }
+  .vp-builder { padding: 44px; border-radius: 18px; border-width: 2px; }
+  .vp-template { font-size: 28px; line-height: 1.9; }
+  .vp-template input { min-width: 200px; padding: 6px 10px; font-size: inherit; border-bottom-width: 2px; }
+  .vp-output { font-size: 26px; padding: 32px; line-height: 1.6; margin-top: 36px; border-radius: 14px; border-width: 2px; }
+  .checklist { gap: 12px; }
+  .check-item { padding: 18px 24px; gap: 18px; border-radius: 12px; border-width: 2px; }
+  .check-box { width: 28px; height: 28px; border-radius: 7px; border-width: 2px; }
+  .check-box::after { font-size: 18px; }
+  .check-text { font-size: 19px; line-height: 1.5; }
+  .check-owner { font-size: 14px; padding: 6px 14px; border-radius: 8px; font-weight: 600; }
+  .timeline-day { margin-bottom: 40px; }
+  .timeline-day-header h3 { font-size: 28px; }
+  .timeline-day-header .date { font-size: 19px; }
+  .timeline-events { gap: 8px; }
+  .timeline-event { grid-template-columns: 130px 1fr; font-size: 20px; padding: 14px 0; gap: 22px; }
+  .timeline-event .time { font-size: 18px; font-weight: 700; }
+  .timeline-event.tu-track { border-left-width: 4px; padding-left: 16px; margin-left: -18px; }
+  .reset-btn { font-size: 15px; padding: 8px 16px; border-radius: 8px; }
+  footer { padding: 56px; font-size: 17px; }
+
+  /* Glow + pulse para secciones críticas */
+  @keyframes pulse-orange {
+    0%, 100% { box-shadow: 0 0 30px rgba(249, 115, 22, 0.2); }
+    50% { box-shadow: 0 0 50px rgba(249, 115, 22, 0.45); }
+  }
+  .strategic-card {
+    background: linear-gradient(135deg, rgba(249,115,22,0.12), rgba(168,85,247,0.06));
+    border: 2px solid var(--orange) !important;
+    animation: pulse-orange 4s ease-in-out infinite;
+  }
+  .strategic-card h3 { font-size: 38px !important; }
+  .big-stat { font-size: 64px; font-weight: 800; line-height: 1; color: var(--orange); margin-bottom: 8px; }
+  .big-stat-lbl { font-size: 16px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; }
+
+  @media (max-width: 1400px) {
+    body { font-size: 19px; }
+    main { padding: 36px; }
+    .section-head h2 { font-size: 34px; }
+    .card h3 { font-size: 24px; }
+    .vp-template { font-size: 22px; }
+    .opt-card h3 { font-size: 26px; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="header-row">
+    <div class="brand">
+      <h1>Chispla</h1>
+      <span class="sep">·</span>
+      <span class="track">Track 01 · Inclusión Financiera</span>
+    </div>
+    <div class="countdowns">
+      <div class="countdown" id="countdown-window">
+        <span class="label">Ventana de construcción válida</span>
+        <span class="value" id="cd-window">cargando...</span>
+      </div>
+      <div class="countdown hot" id="countdown-ficha">
+        <span class="label">Deadline ficha cívica</span>
+        <span class="value" id="cd-ficha">cargando...</span>
+      </div>
+      <div class="countdown hot" id="countdown-tecnico">
+        <span class="label">Deadline técnico</span>
+        <span class="value" id="cd-tecnico">cargando...</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="section">
+    <div class="section-head">
+      <h2>Por qué hacemos esto</h2>
+      <p>Recordatorio de qué busca el equipo antes de discutir alternativas.</p>
+    </div>
+    <div class="card">
+      <p style="font-size:15px;line-height:1.7;">
+        Nos motiva ser parte de los que están ocupando estas herramientas (Claude, agentes) para empujar la
+        democratización de la información. En fintech eso pega especialmente fuerte: hoy el banco, la AFP y la
+        aseguradora saben todo del usuario, y el usuario sabe muy poco de ellos. Nuestro plan en el Impact Lab es
+        usar a los asistentes del Chile Fintech Forum (que están en pasillos de al lado) como motor de validación
+        en vivo, y llegar al Demo Day con evidencia, no con una demo bonita.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h2>★ Estrategia · producto agnóstico que múltiples sponsors quieran adoptar</h2>
+      <p>El equipo descartó casarse solo con Caja Los Andes. Caja no es el único sponsor ni el único jurado. Tesis nueva: construir algo que cualquier red que toque microempresarios pueda integrar, y llegar al Demo Day con dos sponsors pidiéndonos el piloto.</p>
+    </div>
+    <div class="card strategic-card" style="text-align:center;">
+      <div class="meta" style="text-align:center;">Misión del equipo Chispla</div>
+      <h3 style="text-align:center;max-width:1200px;margin-left:auto;margin-right:auto;">Llegar al Demo Day con dos sponsors confirmados pidiéndonos el piloto</h3>
+      <p style="font-size:22px;max-width:1100px;margin:18px auto 0;line-height:1.6;">
+        Si dos canales B2B2C distintos quieren adoptar Chispla post-Lab, aseguramos nivel 5 en viabilidad y mostramos que el producto no depende de un solo aliado. Eso le sube el valor de inversión a cualquiera de ellos.
+      </p>
+    </div>
+    <div class="grid grid-3" style="margin-top:28px;">
+      <div class="card">
+        <div class="big-stat">≈2M</div>
+        <div class="big-stat-lbl">Microemprendedores en Chile</div>
+        <p style="margin-top:14px;">1.998.178 personas (<a href="https://www.ine.gob.cl/eme" target="_blank" style="color:var(--orange);">INE · VIII Encuesta de Microemprendimiento, dic 2024</a>). El 54,2% son informales y el 51% optó por no formalizar. Cualquier red que llegue a este segmento es candidato natural a B2B2C.</p>
+      </div>
+      <div class="card">
+        <div class="big-stat">6+</div>
+        <div class="big-stat-lbl">Canales B2B2C plausibles</div>
+        <p style="margin-top:14px;">Caja Los Andes, Clay, ASECH (Asociación Emprendedores), Fundación ChileMujeres, Coopeuch, Oriencoop. Todos tocan microempresarios y pueden adoptar Chispla en sus canales.</p>
+      </div>
+      <div class="card">
+        <div class="big-stat">2</div>
+        <div class="big-stat-lbl">Sponsors mínimos al Demo Day</div>
+        <p style="margin-top:14px;">La meta es llegar al pitch con dos cartas o sí verbales. Si conseguimos uno vale; si conseguimos dos, el jurado no tiene cómo decir no a la viabilidad post-Lab.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h2>El problema oficial del Track 01</h2>
+      <p>Lo que el doc del Impact Lab dice textualmente que nos toca resolver.</p>
+    </div>
+    <div class="card" style="border-left:3px solid var(--orange);">
+      <p style="font-size:15px;line-height:1.7;">
+        Chile aprobó una de las leyes fintech más avanzadas de Latinoamérica (<a href="https://www.bcn.cl/leychile/navegar?idNorma=1187323" target="_blank" style="color:var(--orange);"><strong>Ley 21.521</strong></a>, vigente desde 3-feb-2023). El <strong style="color:var(--text);">doc oficial del track Inclusión Financiera del Impact Lab</strong> afirma que "5 millones de personas podrían beneficiarse", aunque sin URL de respaldo en CMF/Hacienda. Es la cifra que los jurados leyeron en el doc, así que la podemos citar como "según el doc oficial del Lab" — pero combinada con la cifra anclada del INE (≈2M de microemprendedores) para el segmento concreto que atacamos.
+      </p>
+      <p style="font-size:15px;line-height:1.7;margin-top:12px;color:var(--text-dim);">
+        Lo verificable con URL pública: la <a href="https://www.cmfchile.cl/educa/621/w3-article-85048.html" target="_blank" style="color:var(--orange);">CMF Educa explica</a> que la ley regula a las plataformas de servicios financieros tecnológicos y abre el Sistema de Finanzas Abiertas (Open Finance). La inclusión financiera no es solo "tener cuenta bancaria" — es <strong style="color:var(--text);">entender qué derechos tienes y saber cómo ejercerlos</strong>.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h2>A quién impacta · segmentos del problema</h2>
+      <p>Los 5 perfiles demográficos que el desafío reconoce. Son distintos a los 4 arquetípicos del pitch que están más abajo, esos sirven para el storytelling.</p>
+    </div>
+    <div class="grid grid-3">
+      <div class="card hot">
+        <div class="meta" style="color:var(--orange);">★ Segmento principal · "Primera vez emprendedores"</div>
+        <h3>Quien va a abrir empresa por primera vez</h3>
+        <p>Denominador común: nunca pasaron por el proceso. Cubre microemprendedores primera generación (<a href="https://www.ine.gob.cl/eme" target="_blank" style="color:var(--orange);">≈2M en Chile · INE EME 8</a>, 54,2% son informales), extranjeros residentes, jóvenes que recién empiezan, e informales que llevan meses vendiendo y nunca formalizaron.</p>
+      </div>
+      <div class="card hot">
+        <div class="meta" style="color:var(--orange);">★ Persona del pitch · caso real</div>
+        <h3>Luca · italiano abriendo empresa en Chile</h3>
+        <p>Sistema chileno opaco para quien recién llega. Luca, miembro del equipo, es italiano, lleva un año en Chile y vive el problema en carne propia. Es la versión más dura del problema y la cara humana del pitch. Si funciona para él, funciona para cualquier "primera vez".</p>
+      </div>
+      <div class="card">
+        <h3>Microempresarios primera generación</h3>
+        <p>1.998.178 microemprendedores en Chile (<a href="https://www.ine.gob.cl/eme" target="_blank" style="color:var(--orange);">INE EME 8 · dic 2024</a>), 54,2% son informales. Target natural de Clay también. Sub-caso del segmento principal.</p>
+      </div>
+      <div class="card">
+        <h3>Mujeres jefas de hogar emprendedoras</h3>
+        <p>Barreras adicionales para acceso a crédito y formalización. Programas como Fundación ChileMujeres, FINCA y ASECH las atienden y son canales B2B2C plausibles.</p>
+      </div>
+      <div class="card">
+        <h3>Jóvenes que recién emprenden</h3>
+        <p>Primera vez con SII, primer RUT, primera boleta. Universitarios o egresados que arrancan con un negocio digital.</p>
+      </div>
+      <div class="card">
+        <h3>Adultos mayores</h3>
+        <p>Tienen productos financieros heredados que no entienden. Es el segmento del Track 01 con menos calce con Chispla, queda en backup.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h2>Rúbrica oficial v3.3</h2>
+      <p>7 sub-criterios binarios sobre 100. Score final = mentor × 40% + juez × 60%. El juez pesa más que el mentor: pitch + impacto + demo en vivo valen 60 puntos contra 40 del entregable técnico.</p>
+    </div>
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="chart-wrap">
+          <canvas id="rubricaChart"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="meta" style="margin-bottom:12px;color:var(--text-muted);">Mentor · 40% del total · 6 mayo durante el día</div>
+        <div class="rubrica-row">
+          <div class="rubrica-criterion">
+            <div class="num" style="background:rgba(249,115,22,0.2);color:var(--orange)">M1</div>
+            <div>
+              <div class="name">Problema y ciudadano</div>
+              <div class="desc">A1-A4 · descripción clara, segmento específico, canal real, impacto cuantificado</div>
+            </div>
+          </div>
+          <div class="weight">10</div>
+        </div>
+        <div class="rubrica-row">
+          <div class="rubrica-criterion">
+            <div class="num" style="background:rgba(168,85,247,0.2);color:var(--purple)">M2</div>
+            <div>
+              <div class="name">Datos responsables</div>
+              <div class="desc">A5-A6 · ≥2 fuentes oficiales con URL, cero alucinación regulatoria</div>
+            </div>
+          </div>
+          <div class="weight">10</div>
+        </div>
+        <div class="rubrica-row">
+          <div class="rubrica-criterion">
+            <div class="num" style="background:rgba(59,130,246,0.2);color:var(--blue)">M3</div>
+            <div>
+              <div class="name">Uso de Claude + agéntico</div>
+              <div class="desc">B1-B3 · system prompt &gt;200ch, ≥2 tools schema, ≥3 mensajes en consola Claude</div>
+            </div>
+          </div>
+          <div class="weight">18</div>
+        </div>
+        <div class="rubrica-row">
+          <div class="rubrica-criterion">
+            <div class="num" style="background:rgba(34,197,94,0.2);color:var(--green)">M4</div>
+            <div>
+              <div class="name">Funciona</div>
+              <div class="desc">B4 · demo video 3-5 min con flujo end-to-end accesible</div>
+            </div>
+          </div>
+          <div class="weight">13</div>
+        </div>
+
+        <div class="meta" style="margin:18px 0 12px;color:var(--text-muted);">Juez · 60% del total · 7 mayo durante el pitch</div>
+        <div class="rubrica-row">
+          <div class="rubrica-criterion">
+            <div class="num" style="background:rgba(239,68,68,0.2);color:var(--red)">J1</div>
+            <div>
+              <div class="name">Pitch en vivo</div>
+              <div class="desc">J1.1-J1.4 · ≤3 min, ciudadano por nombre, ≥1 fuente regulatoria, Q&amp;A sin evadir</div>
+            </div>
+          </div>
+          <div class="weight">17</div>
+        </div>
+        <div class="rubrica-row">
+          <div class="rubrica-criterion">
+            <div class="num" style="background:rgba(249,115,22,0.2);color:var(--orange)">J2</div>
+            <div>
+              <div class="name">Impacto ciudadano real</div>
+              <div class="desc">J2.1-J2.4 · métrica X personas/Y meses, viable post-hackathon, resuelve algo nuevo, canal realista</div>
+            </div>
+          </div>
+          <div class="weight">17</div>
+        </div>
+        <div class="rubrica-row">
+          <div class="rubrica-criterion">
+            <div class="num" style="background:rgba(34,197,94,0.2);color:var(--green)">J3</div>
+            <div>
+              <div class="name">Producto / demo en vivo</div>
+              <div class="desc">J3.1-J3.4 · sin crashear, input/output visibles, latencia &lt;30s, Claude evidente</div>
+            </div>
+          </div>
+          <div class="weight">15</div>
+        </div>
+      </div>
+    </div>
+    <div class="grid grid-2" style="margin-top:16px;">
+      <div class="card" style="border-left:3px solid var(--orange);">
+        <div class="meta">Lo que cambió respecto a versiones anteriores</div>
+        <h3>Adiós bonus +5 y gates absolutos</h3>
+        <p>
+          La v3.3 <strong style="color:var(--text);">eliminó el bonus agéntico discrecional</strong> (era +5 al total) y movió los
+          gates de fraude (commits en ventana, trabajo previo, alucinación grave) a sub-checks penalizables, no a descalificadores absolutos.
+          La evaluación ahora son 22 sub-checks binarios pre-evaluados por Bendi (Haiku 4.5) y confirmados 1-click por mentor / juez.
+        </p>
+      </div>
+      <div class="card" style="border-left:3px solid var(--red);">
+        <div class="meta">★ Donde más mueve la aguja</div>
+        <h3>El juez pesa 60 — y J3 (demo en vivo) vale 18</h3>
+        <p>
+          Mentor evalúa entregables (40 puntos). Juez evalúa pitch + impacto + demo (60 puntos). Si la demo no se reproduce
+          en vivo, no se ven input/output en pantalla, latencia &gt;30s o Claude no se nota → perdemos 18 puntos directos.
+          Implicación: invertir tanto en pulir la demo y el pitch como en construir el agente.
+        </p>
+      </div>
+    </div>
+    <div class="card" style="margin-top:16px;">
+      <div class="meta">Reglas de desempate (orden estricto · 7 mayo 11:00 · selección Top 4 finalistas por línea)</div>
+      <p>1. Mayor M3 (uso de Claude — corazón del evento). 2. Mayor M2 (datos responsables). 3. Mayor M1 (problema y ciudadano). 4. Timestamp más temprano del último entregable. 5. Voto del comité.</p>
+      <p style="margin-top:10px;color:var(--text-muted);font-size:18px;font-style:italic;">⚠ Hay discrepancia entre fuentes: rúbrica v3.3 dice Top 4 × 3 líneas = 12 finalistas; bases del Lab dicen Top 6 × 3 = 18. Confirmar con organización el día 1.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h2>Criterios de éxito específicos del track</h2>
+      <p>Lo que el doc oficial de Inclusión Financiera nos exige más allá de la rúbrica general. Son cuatro filtros para autoevaluar la idea.</p>
+    </div>
+    <div class="grid grid-4">
+      <div class="card">
+        <h3>Lenguaje comprensible</h3>
+        <p>Se mide con tests de usuarios reales, no con expertos. Implica validar en pasillo del Forum, no entre nosotros.</p>
+      </div>
+      <div class="card">
+        <h3>Acción, no solo info</h3>
+        <p>Debe llevar a algo concreto: generar un reclamo, simular una decisión, cambiar de banco. No basta con explicar.</p>
+      </div>
+      <div class="card">
+        <h3>Datos reales</h3>
+        <p>Conexión efectiva con CMF, SII o SERNAC. No mocks ni datos inventados en la demo.</p>
+      </div>
+      <div class="card">
+        <h3>Inclusivo</h3>
+        <p>Pensar en analfabetismo digital, smartphones viejos, conexión lenta. WhatsApp pesa más que app propia por esto.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h2>Gates y penalizaciones</h2>
+      <p>Las consecuencias exactas según las bases. No todo descalifica: hay penalizaciones tipadas (-30%, -20%, -5pts, score=0 en ejes específicos) y solo dos gates absolutos.</p>
+    </div>
+    <div class="gates-list">
+      <div class="gate">
+        <span class="icon">✕</span>
+        <span class="text"><strong>Sin Claude como motor principal en consola.</strong> Si la consola Anthropic no muestra llamadas a Claude API en la ventana del Lab → <strong style="color:var(--red);">descalificación</strong>. GPT/Gemini/Llama solo accesorios.</span>
+      </div>
+      <div class="gate">
+        <span class="icon">✕</span>
+        <span class="text"><strong>Sin pitch en vivo.</strong> Sin presentarse al Demo Day → <strong style="color:var(--red);">descalificación</strong>. Faltar a la ficha cívica = -20% del score, faltar al entregable técnico = -30%.</span>
+      </div>
+      <div class="gate">
+        <span class="icon">⚠</span>
+        <span class="text"><strong>Trabajo preexistente confirmado.</strong> Agente técnico marca <code>posible_trabajo_previo</code> si detecta arquitectura no construible en 48h o commits previos. Revisión humana final → si confirma: <strong style="color:var(--red);">descalificación</strong>. Sirve usar libs públicas, no proyectos propios anteriores.</span>
+      </div>
+      <div class="gate">
+        <span class="icon">⚠</span>
+        <span class="text"><strong>Commits fuera de ventana.</strong> Todos los commits deben estar entre 2026-05-06 00:00 y 2026-05-07 23:59 hora Chile. Si no → <strong style="color:var(--orange);">score de M3 (uso de Claude) y M4 (funciona) = 0</strong>. No descalifica solo, pero pierdes 31 de 100 puntos.</span>
+      </div>
+      <div class="gate">
+        <span class="icon">⚠</span>
+        <span class="text"><strong>Alucinación regulatoria.</strong> Mentor regulatorio contrasta demo + README contra Wiki Legal. <strong style="color:var(--red);">Grave</strong> (ley falsa, fuente inventada): <strong style="color:var(--red);">-30% del score total</strong>. <strong style="color:var(--orange);">Leve</strong>: -5 pts. Cada cita de ley en el agente debe traer URL oficial.</span>
+      </div>
+      <div class="gate">
+        <span class="icon">⚠</span>
+        <span class="text"><strong>Manejo de PII si tocamos RUT o datos bancarios.</strong> Si Chispla recibe datos sensibles, tiene que demostrar minimización + no logging + cifrado en reposo. Cae en M2 (datos responsables) y red team del jurado en J1 Q&amp;A.</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h2>Entregables y deadlines</h2>
+      <p>Tres entregas en 36 horas. La ventana arranca el 6-mayo 00:00.</p>
+    </div>
+    <div class="grid grid-3">
+      <div class="deliverable">
+        <div class="when">7 mayo · 10:00</div>
+        <h4>Ficha cívica</h4>
+        <p>Línea temática, problema ciudadano, segmento específico, propuesta de valor, canal de adopción y datos usados. Es el "qué" del proyecto en formulario.</p>
+      </div>
+      <div class="deliverable">
+        <div class="when">7 mayo · 17:00</div>
+        <h4>Entregable técnico</h4>
+        <p><strong>Obligatorio:</strong> demo video 3-5 min + screenshot consola Claude + system prompt principal. <strong>Opcional (+1 en M3 · Uso de Claude):</strong> repo público o ZIP ≤5 MB, tools schema JSON, herramientas Anthropic declaradas (MCP, Files API, Extended Thinking, Computer Use).</p>
+      </div>
+      <div class="deliverable">
+        <div class="when">7 mayo · tarde</div>
+        <h4>Pitch en vivo</h4>
+        <p>3 minutos de pitch + 2 minutos de Q&amp;A del jurado. Top 4-6 equipos por línea llegan a esto (rúbrica v3.3 dice 4, bases dicen 6 — confirmar el día 1).</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h2>Sponsors y jurado del Track 01</h2>
+      <p>Quiénes nos van a juzgar y qué les importa realmente.</p>
+    </div>
+    <div class="grid grid-2">
+      <div class="card hot">
+        <div class="meta">Sponsor principal</div>
+        <h3>Clay</h3>
+        <p style="margin-bottom:12px;">B2B para PyMEs chilenas. Software de gestión financiera y contable con motor IA "Cassius". Conecta con 14 bancos + SII + TGR.</p>
+        <p style="margin-bottom:12px;"><strong style="color:var(--text);">Mentor + jurado del track:</strong> Francisco Provoste, Manager de Data &amp; AI. Carrera en Amazon, Divisin (LLM query agent), LATAM. MS Northeastern + PUC Chile. Perfil técnico fuerte, valora ejecución limpia.</p>
+        <p style="margin-bottom:12px;"><strong style="color:var(--text);">Su apuesta:</strong> co-construir un MCP que traduzca CMF/SII/SERNAC al lenguaje de quien recién entra al sistema financiero.</p>
+        <p><strong style="color:var(--text);">Cómo ganárselo:</strong></p>
+        <ul>
+          <li>Llegar al workshop del 6-mayo 14:00 con prototipo arrancando, no con preguntas.</li>
+          <li>Lenguaje técnico preciso, no buzzwords.</li>
+          <li>Que el MCP también sirva a sus clientes PyMEs (microempresarios = segmento del evento).</li>
+          <li>Ejecución sobre narrativa.</li>
+        </ul>
+        <span class="pill orange" style="margin-top:14px;">Premio: Standing desk + mentoría continuada</span>
+      </div>
+      <div class="card hot">
+        <div class="meta">Co-sponsor</div>
+        <h3>Caja Los Andes</h3>
+        <p style="margin-bottom:12px;">Caja de compensación líder en Chile: <strong style="color:var(--text);">65,86% de los trabajadores afiliados y 66,86% de las empresas</strong> (<a href="https://es.wikipedia.org/wiki/Caja_Los_Andes" target="_blank" style="color:var(--orange);">datos SUSESO · feb 2023</a>), <strong style="color:var(--text);">+4,3M de afiliados</strong> según resultados 2024 (<a href="https://www.latercera.com/sociales/noticia/caja-los-andes-presenta-resultados-2024-y-proyecta-expansion-de-su-oferta/" target="_blank" style="color:var(--orange);">La Tercera, dic 2024</a>).</p>
+        <p style="margin-bottom:12px;"><strong style="color:var(--text);">Stack actual:</strong> app "MásCaja", sucursal virtual, Google Cloud. <strong style="color:var(--red);">No tienen chatbot conversacional propio en producción.</strong> Esa es la grieta.</p>
+        <p style="margin-bottom:12px;"><strong style="color:var(--text);">Productos clave (su workshop 6-mayo 16:00):</strong> crédito social, cesantía, APV. Dolor real: APV con bono fiscal subutilizado por complejidad de regímenes A vs B.</p>
+        <p><strong style="color:var(--text);">Apetito por pilotos:</strong></p>
+        <ul>
+          <li><a href="https://www.fintechile.org/noticias/caja-los-andes-debuta-en-inversion-en-startups-con-su-primer-respaldo-a-chilena-soyio" target="_blank" style="color:var(--orange);">Fondo LEAP USD $9M (CVC corporate venturing)</a> · primera inversión en Soyio (USD $325k).</li>
+          <li><a href="https://somosandes.cajalosandes.cl/innovacion/tecla-2025" target="_blank" style="color:var(--orange);">TECLA 2025 (8va edición)</a>: hasta $100M CLP entre ganadores · una de sus 3 áreas es <strong style="color:var(--text);">salud financiera</strong>.</li>
+          <li>Son socios reales, no clientes distantes.</li>
+        </ul>
+        <span class="pill orange" style="margin-top:14px;">Premio: Piloto co-diseñado (a confirmar)</span>
+      </div>
+      <div class="card">
+        <div class="meta">Technical partner</div>
+        <h3>Anthropic</h3>
+        <p>Power detrás del evento. Workshop transversal el 6-mayo 15:40 sobre patrones de implementación segura en productos regulados (tool use, memoria, guardrails).</p>
+        <p style="margin-top:8px;"><strong style="color:var(--text);">Premios:</strong> $50 USD créditos Claude API por persona (todos), créditos extendidos para ganadores, mención en blog oficial Anthropic.</p>
+      </div>
+      <div class="card">
+        <div class="meta">Resto del jurado</div>
+        <h3>FinteChile + CMF + Sonda + Active IT</h3>
+        <p>FinteChile (gremio) y CMF (regulador) miran rigor regulatorio y compliance-first. Sonda y Active IT son sponsors de otros tracks pero juzgan transversal.</p>
+        <p style="margin-top:8px;"><strong style="color:var(--text);">Implicancia:</strong> nuestro pitch tiene que parar bien parado en cumplimiento. Citar las leyes correctas, mostrar manejo de PII, respetar SERNAC.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h2>★ El producto · Chispla para microempresarios formalizándose</h2>
+      <p>Decisión tomada por el equipo. Esta es la versión 1 de la propuesta de valor que vamos a defender en el pitch.</p>
+    </div>
+    <div class="card strategic-card" style="text-align:center;">
+      <div class="meta" style="text-align:center;">Propuesta de valor v5 · cubre formalización + derechos</div>
+      <p style="font-size:28px;line-height:1.7;max-width:1300px;margin:18px auto 0;color:var(--text);">
+        Para <strong style="color:var(--orange);">quienes quieren entrar al sistema financiero formal en Chile por primera vez</strong>,
+        <strong style="color:var(--orange);">Chispla</strong> arma en WhatsApp el
+        <strong style="color:var(--orange);">playbook completo</strong> con datos reales del
+        <strong style="color:var(--orange);">SII, CMF y SERNAC</strong> —pasos, fechas, obligaciones, decisiones, formularios pre-rellenados <em>y reclamos cuando algo sale mal</em>—,
+        para que <strong style="color:var(--orange);">formalicen su empresa cumpliendo la regulación y sepan ejercer sus derechos como consumidores financieros</strong>,
+        llegando vía <strong style="color:var(--orange);">acuerdos B2B2C con Caja Los Andes, Clay y otras redes del ecosistema fintech chileno</strong>.
+      </p>
+    </div>
+
+    <div class="grid grid-3" style="margin-top:28px;">
+      <div class="card">
+        <div class="meta">El usuario</div>
+        <h3>Quien va a abrir empresa por primera vez</h3>
+        <p>Chilenos primera generación, extranjeros residentes como Luca, jóvenes que recién empiezan, microemprendedores informales que llevan meses vendiendo y nunca formalizaron. <a href="https://www.ine.gob.cl/eme" target="_blank" style="color:var(--orange);">≈2M de microemprendedores en Chile (INE EME 8, dic 2024)</a>, 54,2% son informales. Y miles de extranjeros que ni siquiera saben por dónde se entra al sistema. Todos con un denominador común: nunca pasaron por el proceso.</p>
+      </div>
+      <div class="card">
+        <div class="meta">El dolor concreto</div>
+        <h3>14 trámites cruzados sin un mapa</h3>
+        <p>Entre el SII, la municipalidad, la CMF y SERNAC hay decenas de pasos, fechas, obligaciones y decisiones que no hablan entre sí. Iniciación de actividades, patente comercial, RUT, régimen tributario, primer pago de IVA, boleta electrónica, plazos de declaración. Cualquier paso mal cuesta caro y desincentiva formalizar.</p>
+      </div>
+      <div class="card">
+        <div class="meta">Lo que entrega Chispla</div>
+        <h3>El playbook completo, no solo explicaciones</h3>
+        <p>Por WhatsApp Chispla pregunta lo necesario y le arma al usuario el playbook personalizado: pasos en orden, fechas y plazos cruzados, obligaciones que se le aplican, decisiones que tiene que tomar y los formularios pre-rellenados en PDF listos para ejecutar. No es un buscador, es un copiloto que hace.</p>
+      </div>
+    </div>
+
+    <div class="grid grid-2" style="margin-top:24px;">
+      <div class="card hot">
+        <div class="meta">Aliado · presencia en evento</div>
+        <h3>Caja Los Andes</h3>
+        <p>Tiene al microemprendedor como afiliado en transición empleado→independiente. Retención del afiliado en el momento crítico. Workshop directo el 6-mayo 16:00 + LEAP USD $9M activo + TECLA 2025 con foco en salud financiera.</p>
+      </div>
+      <div class="card hot">
+        <div class="meta">Aliado · presencia en evento</div>
+        <h3>Clay</h3>
+        <p>Cada microempresario formalizado es lead-prospect natural de Clay (B2B PyMEs). Su top-funnel ideal. Workshop ampliado 6-mayo 14:00 con Francisco Provoste como mentor + jurado.</p>
+      </div>
+    </div>
+    <div class="grid grid-3" style="margin-top:18px;">
+      <div class="card">
+        <div class="meta">Aliado · contacto post-Lab</div>
+        <h3>ASECH</h3>
+        <p>Asociación Emprendedores Chile. Atiende decenas de miles de microempresarios. Mencionada en el doc oficial del Track 01 como stakeholder. Contactar vía LinkedIn pre-evento.</p>
+      </div>
+      <div class="card">
+        <div class="meta">Aliado · ONG con segmento</div>
+        <h3>Fundación ChileMujeres + FINCA</h3>
+        <p>Programas de microcrédito y educación financiera para mujeres jefas de hogar emprendedoras. Calce directo con uno de los segmentos del challenge.</p>
+      </div>
+      <div class="card">
+        <div class="meta">Aliado · cooperativas</div>
+        <h3>Coopeuch + Oriencoop</h3>
+        <p>Cooperativas de ahorro buscando inclusión. Microempresarios formalizados son su perfil de socio ideal. Distribución natural via su red.</p>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:24px;border-left:5px solid var(--orange);">
+      <div class="meta">4 conversaciones tipo del MVP · cubren formalización + derechos CMF</div>
+      <h3>Lo que un usuario puede preguntar el día 1</h3>
+      <ul>
+        <li><strong style="color:var(--text);">"Soy italiano y vivo en Chile hace un año. Quiero abrir mi empresa de servicios, ¿qué necesito?"</strong> → Chispla lista los pasos en orden (RUT extranjero ya verificado, iniciación de actividades en SII, patente municipal según comuna), las fechas y plazos cruzados, y entrega los formularios pre-rellenados como PDF.</li>
+        <li><strong style="color:var(--text);">"Vendo cosméticos por Instagram desde hace 6 meses, ¿tengo que formalizar?"</strong> → Chispla explica los umbrales del SII donde se gatilla obligación de boleta, las decisiones que tiene que tomar (régimen, patente comercial domiciliaria) y los plazos de declaración mensual.</li>
+        <li><strong style="color:var(--text);">"Quiero abrir un almacén de barrio, ¿qué tengo que hacer primero?"</strong> → Chispla devuelve la secuencia exacta (escritura, RUT, SII, patente, primera boleta), las fechas críticas y las opciones de financiamiento vía red Caja Los Andes con el camino formalización más crédito social.</li>
+        <li><strong style="color:var(--orange);">★ "Mi proveedor financiero me cobró un cargo que no reconozco / no me explicaron bien las condiciones del crédito, ¿qué hago?"</strong> → Chispla diferencia si la entidad es regulada por CMF, SERNAC o tribunales, redacta el reclamo con los hechos en lenguaje formal, adjunta la normativa específica (Ley 19.496, Ley 21.398, NCG aplicable) y entrega el link directo al portal de reclamos CMF o SERNAC. <em>Cubre el flanco del tip CMF Línea 01 sin pivotear el producto.</em></li>
+      </ul>
+      <p style="margin-top:18px;color:var(--text-muted);font-size:18px;font-style:italic;">⚠ Verificar reglas exactas del SII (umbrales de obligación, plazos, regímenes), municipales (patente comercial) y procedimientos de reclamo CMF/SERNAC antes de programar respuestas reales. M2 (datos responsables) penaliza alucinación regulatoria: grave -30%, leve -5pts.</p>
+    </div>
+  </section>
+
+  <section class="section" style="display:none;">
+    <div class="section-head">
+      <h2>Productos auxiliares de Caja (referencia)</h2>
+      <p>Productos del workshop de Caja que pueden integrarse al journey post-formalización.</p>
+    </div>
+    <div class="grid grid-3">
+      <div class="card opt-card" data-opt="A" onclick="toggleOption('A')">
+        <div class="opt-letter">💰</div>
+        <h3>APV</h3>
+        <div class="tagline">"Tu plata sobre la mesa que no estás viendo"</div>
+        <div class="field">
+          <div class="field-label">Qué es</div>
+          <div class="field-value">Ahorro previsional voluntario complementario, con bono fiscal anual.</div>
+        </div>
+        <div class="field">
+          <div class="field-label">Donde hay dolor</div>
+          <div class="field-value">El usuario no entiende los regímenes A vs B ni cómo funciona el bono fiscal. Cree que el APV no es rescatable y por eso ni lo abre.</div>
+        </div>
+        <div class="field">
+          <div class="field-label">Por qué pega fuerte</div>
+          <div class="field-value">Es la conversación más rentable: una explicación clara le devuelve plata directa al afiliado vía bono fiscal. Y es lo menos cubierto por la app actual de Caja.</div>
+        </div>
+        <div class="field">
+          <div class="field-label">Pregunta tipo</div>
+          <div class="field-value">"Gano $1.5M, ¿me conviene meter al APV este año?" → Asistente compara régimen A vs B con números reales del SII.</div>
+        </div>
+        <div class="field">
+          <div class="field-label">Fuente oficial</div>
+          <div class="field-value"><a href="https://mismetas.cajalosandes.cl/productos/ahorro-apv" target="_blank" style="color:var(--orange);text-decoration:underline;">mismetas.cajalosandes.cl/productos/ahorro-apv</a></div>
+        </div>
+        <div class="vote-row">
+          <button class="vote-btn" data-voter="Edu" data-opt="A" onclick="vote(event,'Edu','A')">Edu</button>
+          <button class="vote-btn" data-voter="Lucas" data-opt="A" onclick="vote(event,'Lucas','A')">Lucas</button>
+          <button class="vote-btn" data-voter="Luca" data-opt="A" onclick="vote(event,'Luca','A')">Luca</button>
+        </div>
+      </div>
+
+      <div class="card opt-card" data-opt="B" onclick="toggleOption('B')">
+        <div class="opt-letter">💸</div>
+        <h3>Cesantía</h3>
+        <div class="tagline">"La plata que tienes acumulada y no sabes que tienes"</div>
+        <div class="field">
+          <div class="field-label">Qué es</div>
+          <div class="field-value">Subsidio cuando pierdes el trabajo. Mezcla de fondo individual acumulado en tu cotización + complemento estatal.</div>
+        </div>
+        <div class="field">
+          <div class="field-label">Donde hay dolor</div>
+          <div class="field-value">El usuario no sabe que tiene plata acumulada. Cree que se pierde si no la retira inmediatamente al despido.</div>
+        </div>
+        <div class="field">
+          <div class="field-label">Por qué pega fuerte</div>
+          <div class="field-value">Momento de máxima ansiedad: acaban de perder el trabajo. Un asistente que explica con calma "tienes X plata y así la sacas" tiene impacto humano gigante.</div>
+        </div>
+        <div class="field">
+          <div class="field-label">Pregunta tipo</div>
+          <div class="field-value">"Me despidieron hoy, ¿cuándo y cuánto cobro?" → Asistente guía paso a paso plazo, monto estimado y trámite exacto.</div>
+        </div>
+        <div class="field">
+          <div class="field-label">Fuente oficial</div>
+          <div class="field-value"><a href="https://www.cajalosandes.cl/apoyo-social/subsidio-de-cesantia" target="_blank" style="color:var(--orange);text-decoration:underline;">cajalosandes.cl/apoyo-social/subsidio-de-cesantia</a></div>
+        </div>
+        <div class="vote-row">
+          <button class="vote-btn" data-voter="Edu" data-opt="B" onclick="vote(event,'Edu','B')">Edu</button>
+          <button class="vote-btn" data-voter="Lucas" data-opt="B" onclick="vote(event,'Lucas','B')">Lucas</button>
+          <button class="vote-btn" data-voter="Luca" data-opt="B" onclick="vote(event,'Luca','B')">Luca</button>
+        </div>
+      </div>
+
+      <div class="card opt-card" data-opt="C" onclick="toggleOption('C')">
+        <div class="opt-letter">🏦</div>
+        <h3>Crédito Social</h3>
+        <div class="tagline">"Decir SÍ sin saber qué firmaste"</div>
+        <div class="field">
+          <div class="field-label">Qué es</div>
+          <div class="field-value">Préstamo para consumo o vivienda con tasas reguladas. Producto típico y de gran volumen en cajas.</div>
+        </div>
+        <div class="field">
+          <div class="field-label">Donde hay dolor</div>
+          <div class="field-value">El usuario confunde "aprobación previa" con aprobación real. La tasa cambia por scoring interno y aparecen costos no obvios.</div>
+        </div>
+        <div class="field">
+          <div class="field-label">Por qué pega fuerte</div>
+          <div class="field-value">Volumen alto y riesgo regulatorio alto. Si el asistente explica claro, evita conflictos SERNAC Financiero (Ley 21.398) y respeta el análisis obligatorio de solvencia antes de cursar crédito.</div>
+        </div>
+        <div class="field">
+          <div class="field-label">Pregunta tipo</div>
+          <div class="field-value">"Me preaprobaron $2M, ¿cuánto pago al final?" → Asistente calcula CAE real y muestra alternativas comparables.</div>
+        </div>
+        <div class="field">
+          <div class="field-label">Fuente oficial</div>
+          <div class="field-value"><a href="https://www.cajalosandes.cl/creditos/credito-social" target="_blank" style="color:var(--orange);text-decoration:underline;">cajalosandes.cl/creditos/credito-social</a></div>
+        </div>
+        <div class="vote-row">
+          <button class="vote-btn" data-voter="Edu" data-opt="C" onclick="vote(event,'Edu','C')">Edu</button>
+          <button class="vote-btn" data-voter="Lucas" data-opt="C" onclick="vote(event,'Lucas','C')">Lucas</button>
+          <button class="vote-btn" data-voter="Luca" data-opt="C" onclick="vote(event,'Luca','C')">Luca</button>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:24px;border-left:4px solid var(--orange);">
+      <div class="meta">Recomendación de partida</div>
+      <h3>Empezar por APV, expandir después a Cesantía</h3>
+      <p>El APV tiene el multiplicador emocional y financiero más alto: una conversación bien hecha le devuelve plata directa al afiliado vía bono fiscal. Y la app actual de Caja casi no lo aborda. Cesantía y Crédito Social son expansiones naturales una vez validado el primero. La arquitectura del agente debe servir a los tres.</p>
+      <p style="margin-top:14px;color:var(--text-muted);font-size:18px;font-style:italic;">⚠ Verificar todas las cifras y reglas exactas en las URLs oficiales antes de meterlas en el demo. La rúbrica penaliza alucinación regulatoria grave.</p>
+      <button class="reset-btn" style="margin-top:14px;" onclick="resetVotes()">Reset votos</button>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h2>Competencia · qué ya existe</h2>
+      <p>Las soluciones actuales de inclusión financiera en Chile, según el doc oficial. Conocerlas evita reinventar y ayuda a defender el diferencial en el pitch.</p>
+    </div>
+    <div class="grid grid-4">
+      <div class="card">
+        <div class="meta">Score crediticio alternativo</div>
+        <h3>Destacame</h3>
+        <p>Score basado en datos no tradicionales para personas sin historial bancario.</p>
+      </div>
+      <div class="card">
+        <div class="meta">Educación financiera</div>
+        <h3>Fintual</h3>
+        <p>Contenido educativo gratuito sobre inversiones y ahorro.</p>
+      </div>
+      <div class="card">
+        <div class="meta">Banca tradicional</div>
+        <h3>ABIF cursos</h3>
+        <p>Cursos formales sobre productos financieros para clientes bancarios.</p>
+      </div>
+      <div class="card">
+        <div class="meta">Estado</div>
+        <h3>CMF Educa</h3>
+        <p>Portal oficial de educación financiera del regulador.</p>
+      </div>
+    </div>
+    <div class="card" style="margin-top:16px;border-left:3px solid var(--orange);">
+      <div class="meta">El gap exacto donde entramos</div>
+      <h3>Lo que les falta a todos: conversacional + accionable + personalizado</h3>
+      <p>
+        Ninguno habla de tú a tú con el usuario. Ninguno te lleva a una acción concreta. Ninguno mira tu situación específica.
+        Si nuestra solución cubre las tres cosas, tenemos diferencial defendible en el pitch.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h2>Stakeholders del track · mapeo de cercanía</h2>
+      <p>Aliados naturales del proyecto agrupados por qué tan factible es enchufarlos antes del Demo Day.</p>
+    </div>
+    <div class="grid grid-3">
+      <div class="card hot">
+        <div class="meta">Tier 1 · presentes en el evento</div>
+        <h3>Clay + Caja Los Andes + CMF</h3>
+        <p>Sponsors directos del track y CMF en el jurado. Acceso garantizado los días 6 y 7. Si cerramos piloto con uno antes del pitch, nivel 5 en viabilidad.</p>
+        <ul>
+          <li>Clay (Provoste) en workshop 6-mayo 14:00</li>
+          <li>Caja Los Andes en workshop 6-mayo 16:00</li>
+          <li>CMF en jurado del Demo Day y mentorías</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="meta">Tier 2 · contactables el día 1</div>
+        <h3>SERNAC + FinteChile + Anthropic</h3>
+        <p>Presentes en el Forum o jurado. Vale la pena agendar 5 a 10 min de pasillo el día 1.</p>
+        <ul>
+          <li>SERNAC reduce reclamos si la gente entiende primero, ángulo natural</li>
+          <li>FinteChile gremio fintech, Josefina Movillo coordina</li>
+          <li>Anthropic technical partner, abre canal Anthropic LATAM</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="meta">Tier 3 · post-evento vía LinkedIn</div>
+        <h3>Hacienda + ONGs + Cooperativas + Educación formal</h3>
+        <p>Aliados estratégicos para escalar después. Mencionarlos en el pitch suma a viabilidad post-Lab aunque no haya contacto cerrado todavía.</p>
+        <ul>
+          <li>Ministerio de Hacienda · política de inclusión financiera</li>
+          <li>Fundación ChileMujeres, ASECH, FINCA</li>
+          <li>Coopeuch, Oriencoop · buscan inclusión</li>
+          <li>Junaeb, Mineduc · educación financiera formal</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h2>Framework del pitch · arquetipos del Impact Lab</h2>
+      <p>Los 4 perfiles que la landing del Impact Lab nombra. Elegir uno y defenderlo.</p>
+    </div>
+    <div class="segments-grid">
+      <div class="segment-card" onclick="toggleSegment('universitaria')">
+        <span class="emoji">🎓</span>
+        <h4>La universitaria perdida</h4>
+        <p>18-24 años, primera cuenta digital, primera tarjeta, primer crédito. No sabe leer letra chica.</p>
+      </div>
+      <div class="segment-card" onclick="toggleSegment('jubilado')">
+        <span class="emoji">👴</span>
+        <h4>El jubilado invisible</h4>
+        <p>60-75 años, productos financieros heredados que no entiende. Vulnerable a vishing.</p>
+      </div>
+      <div class="segment-card selected" onclick="toggleSegment('emprendedora')">
+        <span class="emoji">💼</span>
+        <h4>La emprendedora a ciegas</h4>
+        <p>Microemprendedora primera generación. ≈2M en Chile (INE EME 8, dic 2024). 54,2% son informales y el 51% optó por no formalizar.</p>
+      </div>
+      <div class="segment-card" onclick="toggleSegment('victima')">
+        <span class="emoji">⚠️</span>
+        <h4>La víctima del fraude</h4>
+        <p>Recibió cargo no autorizado, llamada vishing o estafa fintech y no sabe cómo reclamar.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h2>Canales de adopción</h2>
+      <p>Elegir uno define el resto del proyecto. Bonus si llegamos al pitch con stakeholder confirmado.</p>
+    </div>
+    <div class="channels-grid">
+      <div class="channel-card selected" onclick="toggleChannel('b2b2c')">
+        <span class="code">B2B2C</span>
+        <h4>Vía empresa-canal</h4>
+        <p>Caja Los Andes, banco o fintech adopta tu herramienta y la pone en sus canales.</p>
+      </div>
+      <div class="channel-card" onclick="toggleChannel('b2c')">
+        <span class="code">B2C</span>
+        <h4>Directo al ciudadano</h4>
+        <p>App, bot WhatsApp, web. El usuario descarga y usa solo.</p>
+      </div>
+      <div class="channel-card" onclick="toggleChannel('b2g')">
+        <span class="code">B2G</span>
+        <h4>Vía Estado</h4>
+        <p>CMF, SERNAC, SII o municipio adopta la solución dentro de un programa público.</p>
+      </div>
+      <div class="channel-card" onclick="toggleChannel('b2ngo')">
+        <span class="code">B2NGO</span>
+        <h4>Vía ONG</h4>
+        <p>Fundación que atiende población vulnerable la integra en su trabajo.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h2>Constructor de propuesta de valor</h2>
+      <p>Plantilla oficial del Impact Lab. Llena los huecos para ver el statement final.</p>
+    </div>
+    <div class="vp-builder">
+      <div class="vp-template">
+        Para
+        <input id="vp-segmento" placeholder="segmento específico" value="quienes quieren entrar al sistema financiero formal en Chile por primera vez" oninput="updateVP()" style="min-width:520px">
+        que
+        <input id="vp-problema" placeholder="problema ciudadano real" value="nunca pasaron por el proceso, no saben qué pasos y obligaciones les corresponden, ni cómo defenderse cuando algo sale mal" oninput="updateVP()" style="min-width:680px">,
+        <input id="vp-solucion" placeholder="tu solución" value="Chispla" oninput="updateVP()">
+        <input id="vp-quehace" placeholder="qué hace con IA" value="arma en WhatsApp con datos reales del SII, CMF y SERNAC el playbook completo (pasos, fechas, obligaciones, decisiones, formularios pre-rellenados y reclamos)" oninput="updateVP()" style="min-width:720px">
+        para que
+        <input id="vp-beneficio" placeholder="beneficio humano concreto" value="formalicen su empresa cumpliendo la regulación y sepan ejercer sus derechos como consumidores financieros" oninput="updateVP()" style="min-width:560px">,
+        llegando vía
+        <input id="vp-canal" placeholder="canal de adopción" value="acuerdos B2B2C con Caja Los Andes, Clay y otras redes del ecosistema fintech chileno" oninput="updateVP()" style="min-width:560px">.
+      </div>
+      <div class="vp-output" id="vp-output"></div>
+      <button class="reset-btn" style="margin-top:12px;" onclick="showVP()">Generar versión final</button>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h2>Timeline operativo del evento</h2>
+      <p>Solo lo crítico. Las marcadas en naranja son las que más mueven la aguja.</p>
+    </div>
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="timeline-day">
+          <div class="timeline-day-header">
+            <h3>Día 1</h3>
+            <span class="date">miércoles 6 mayo</span>
+          </div>
+          <div class="timeline-events">
+            <div class="timeline-event critical"><span class="time">00:00</span><span class="what">★ Arranca ventana de construcción válida</span></div>
+            <div class="timeline-event"><span class="time">11:30</span><span class="what">Apertura · Felipe Pacheco keynote (60 min)</span></div>
+            <div class="timeline-event tu-track"><span class="time">14:00</span><span class="what">★ Workshop Clay 60 min · co-construcción MCP</span></div>
+            <div class="timeline-event"><span class="time">15:40</span><span class="what">Anthropic · patrones para fintech (15 min)</span></div>
+            <div class="timeline-event tu-track"><span class="time">16:00</span><span class="what">★ Caja Los Andes · APV/cesantía/crédito social (15 min)</span></div>
+            <div class="timeline-event"><span class="time">16:25</span><span class="what">Felipe · sistemas operativos de agentes (15 min)</span></div>
+            <div class="timeline-event"><span class="time">17:00</span><span class="what">Hugo Guerra · MCP para Chile (15 min)</span></div>
+            <div class="timeline-event"><span class="time">17:15</span><span class="what">Trabajo en equipo + networking</span></div>
+            <div class="timeline-event"><span class="time">19:30</span><span class="what">Cierre físico Zona IA (no acceso nocturno)</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="timeline-day">
+          <div class="timeline-day-header">
+            <h3>Día 2</h3>
+            <span class="date">jueves 7 mayo</span>
+          </div>
+          <div class="timeline-events">
+            <div class="timeline-event"><span class="time">09:00</span><span class="what">Warm-up + check-in</span></div>
+            <div class="timeline-event tu-track"><span class="time">09:30</span><span class="what">★ Mentorías finales · Provoste + Caja Los Andes</span></div>
+            <div class="timeline-event critical"><span class="time">10:00</span><span class="what">★ Deadline ficha cívica</span></div>
+            <div class="timeline-event"><span class="time">10:30</span><span class="what">Demo Day kickoff (audiencia CFF26 abierta)</span></div>
+            <div class="timeline-event critical"><span class="time">10:45</span><span class="what">★ Demo Day · pitches finales (3+2 min)</span></div>
+            <div class="timeline-event critical"><span class="time">12:00</span><span class="what">★ Premiación + cierre oficial</span></div>
+            <div class="timeline-event"><span class="time">13:00</span><span class="what">Cierre físico del Lab</span></div>
+            <div class="timeline-event critical"><span class="time">17:00</span><span class="what">★ Deadline entregable técnico</span></div>
+            <div class="timeline-event"><span class="time">23:59</span><span class="what">Cierra ventana de construcción válida</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h2>Pitch · estructura de 3 minutos + hook</h2>
+      <p>Lucas pitchea. Estructura oficial del Impact Lab y el hook que decidimos usar (caso real de Luca, miembro del equipo).</p>
+    </div>
+    <div class="card strategic-card">
+      <div class="meta">★ Hook del pitch · 15 segundos</div>
+      <h3 style="text-align:left;font-size:30px !important;">"Luca está acá conmigo"</h3>
+      <p style="font-size:22px;line-height:1.7;margin-top:12px;">
+        "Luca está acá conmigo. Es italiano. Lleva un año en Chile y quiere abrir su empresa. Tres semanas leyendo PDFs del SII después, no sabe si tiene que sacar patente municipal primero o iniciar actividades en el SII, no entiende qué cambia siendo extranjero residente, y nadie le explicó que la municipalidad y el SII son trámites distintos. Por él construimos Chispla."
+      </p>
+      <p style="margin-top:14px;color:var(--text-muted);font-size:17px;font-style:italic;">Lucas señala a Luca en escena. Caso real, no inventado. Activa empatía y "narrativa ciudadana" (15% rúbrica) sin alucinar nada.</p>
+    </div>
+    <div class="grid grid-2" style="margin-top:18px;">
+      <div class="card">
+        <div class="meta">Estructura oficial del Impact Lab</div>
+        <h3>3 minutos · 8 bloques</h3>
+        <ul>
+          <li><strong style="color:var(--text);">Hook (15s)</strong> · Caso de Luca</li>
+          <li><strong style="color:var(--text);">Problema (30s)</strong> · ≈2M microemprendedores en Chile (INE EME 8) + miles de extranjeros, 54,2% son informales y nunca formalizaron</li>
+          <li><strong style="color:var(--text);">Solución (45s)</strong> · Demo de Chispla en vivo: el agente <strong style="color:var(--orange);">los entra al sistema (SII + CMF + municipios) y los defiende cuando algo sale mal (reclamo CMF / SERNAC)</strong>. Mostrar la conversación con más tracción del día 1.</li>
+          <li><strong style="color:var(--text);">Mercado (20s)</strong> · TAM real + canales B2B2C</li>
+          <li><strong style="color:var(--text);">Modelo (20s)</strong> · Impacto cívico, no modelo de negocio (lo que pesa en Impact Lab)</li>
+          <li><strong style="color:var(--text);">Tracción (20s)</strong> · Validaciones del Forum + sponsors interesados</li>
+          <li><strong style="color:var(--text);">Equipo (15s)</strong> · Lucas + Edu + Luca</li>
+          <li><strong style="color:var(--text);">Ask (15s)</strong> · El combo (ver tarjeta al lado)</li>
+        </ul>
+      </div>
+      <div class="card hot">
+        <div class="meta">★ Ask al jurado · cierre del pitch</div>
+        <h3>Tres cosas que pedimos en el cierre</h3>
+        <ul>
+          <li>60 días en el AI Fintech Sandbox con FinteChile para validar Chispla con 100 microempresarios reales antes del 30 de junio.</li>
+          <li>Piloto B2B2C con Caja Los Andes en su base de afiliados en transición empleado-independiente.</li>
+          <li>Abrir el MCP de Clay para que Chispla lo use en producción.</li>
+        </ul>
+        <p style="margin-top:14px;font-size:18px;">Promesa medible: en 90 días, 500 microempresarios formalizados con datos reales.</p>
+      </div>
+    </div>
+    <div class="card" style="margin-top:18px;border-left:4px solid var(--orange);">
+      <div class="meta">Demo en vivo · regla del pulgar</div>
+      <h3>La conversación que se prende es la que más tracción tuvo en el Forum</h3>
+      <p>Día 1 validamos las tres conversaciones tipo (italiano abriendo empresa de servicios, instagrammer formalizando, almacenero arrancando). La que genere mejor reacción en pasillo es la que se proyecta en el Demo Day. Esa decisión se toma máximo a las 17:15 del día 1 cuando empieza el bloque de trabajo en equipo.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h2>Acciones de hoy (primera reu)</h2>
+      <p>Click para marcar como hecho. Se guarda en tu navegador.</p>
+    </div>
+    <div class="checklist" id="checklist"></div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h2>Stack técnico recomendado por el evento</h2>
+      <p>Para nuestro modo Vibecoder + Track 01.</p>
+    </div>
+    <div class="grid grid-3">
+      <div class="card">
+        <div class="meta">Cerebro</div>
+        <h3>Claude API</h3>
+        <p>Motor principal obligatorio. Para Vibecoder se permite vía Claude Code, Cursor, v0, no-code/low-code.</p>
+      </div>
+      <div class="card">
+        <div class="meta">Memoria</div>
+        <h3>RAG con pgvector</h3>
+        <p>Búsqueda semántica sobre normativa cargada en `fuentes.md` con URL oficiales. Supabase ya nos da Postgres con pgvector activo.</p>
+      </div>
+      <div class="card">
+        <div class="meta">Frontend</div>
+        <h3>WhatsApp via Kapso</h3>
+        <p>Donde la gente ya está. Kapso se encarga de la integración con WhatsApp Business API. Output en cards y mensajes cortos, no en párrafos largos.</p>
+      </div>
+      <div class="card hot">
+        <div class="meta">★ Datos reales sin alucinar</div>
+        <h3>BCN API Ley Fácil + PDFs oficiales cacheados</h3>
+        <p>BCN API Ley Fácil es JSON, gratuita, oficial, su propósito literal es explicar normas a usuarios finales. Complementamos con PDFs descargados de NCG 502, NCG 514, Ley 21.521, Ley 21.398. Cero scraping de CMF.</p>
+      </div>
+      <div class="card hot">
+        <div class="meta">★ Suma +1 en M3 (Uso de Claude)</div>
+        <h3>MCP propio + Files API</h3>
+        <p>Decisión cerrada del equipo. MCP propio que envuelve BCN Ley Fácil + fuentes oficiales con citation. Files API entrega los templates PDF pre-rellenados al usuario. Declarar ambas en el entregable técnico suma +1 en el criterio "Uso de Claude" según bases v3.3 (el bonus +5 absoluto fue eliminado).</p>
+      </div>
+      <div class="card">
+        <div class="meta">Hosting</div>
+        <h3>Vercel + Supabase São Paulo</h3>
+        <p>Vercel para Next.js / dashboard interno y endpoints. Supabase región sa-east-1 con RLS estricto, RUT cifrado vía pgcrypto, retención TTL agresiva, consentimiento explícito en primer mensaje.</p>
+      </div>
+      <div class="card">
+        <div class="meta">Lenguaje</div>
+        <h3>Test con usuarios reales</h3>
+        <p>Lenguaje comprensible se mide con usuarios, no con expertos. Dos rondas en pasillo del Forum mínimo.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h2>Marco legal — para no alucinar normativa</h2>
+      <p>Lista alineada con el doc oficial Legal Chile del Impact Lab. Cada cita en el agente debe venir con URL, sin excepción.</p>
+    </div>
+    <div class="grid grid-2">
+      <div class="card hot">
+        <div class="meta">Ley madre del evento · vigente desde 3 feb 2023</div>
+        <h3>Ley 21.521 · Fintec</h3>
+        <p>Marco legal fintech chileno, uno de los más completos de Latinoamérica. Define servicios financieros regulados, protección al cliente y abre el Sistema de Finanzas Abiertas (SFA / Open Finance). Implementación vía NCG 502 (registro), NCG 514 (Open Finance), Manual SIF (ciberseguridad).</p>
+        <p style="margin-top:8px;font-size:13px;"><strong style="color:var(--text);">Fuentes:</strong> <a href="https://www.bcn.cl/leychile/navegar?idNorma=1187323" target="_blank" style="color:var(--orange);">BCN texto ley</a> · <a href="https://www.cmfchile.cl/portal/principal/613/w3-propertyvalue-43589.html" target="_blank" style="color:var(--orange);">Portal Fintec CMF</a></p>
+      </div>
+      <div class="card hot">
+        <div class="meta">Vigente HOY (mayo 2026) en protección de datos</div>
+        <h3>Ley 19.628 · Protección de la Vida Privada</h3>
+        <p>Es la ley vigente durante el evento. Diseñamos para Ley 21.719 (entra el 1 dic 2026, GDPR-style), pero en pitch decimos "cumple Ley 19.628 hoy y arquitectura lista para Ley 21.719 en 7 meses". Más fuerte que decir cumplimos algo que no rige.</p>
+        <p style="margin-top:8px;font-size:13px;color:var(--text-muted);"><strong style="color:var(--text);">Nota:</strong> el doc oficial Legal Chile del Lab no provee URL específica para Ley 19.628 — la cita por nombre.</p>
+      </div>
+      <div class="card">
+        <div class="meta">Promulgada dic 2024 · vigencia 1 dic 2026</div>
+        <h3>Ley 21.719 · Nueva protección de datos</h3>
+        <p>GDPR-style chilena. Crea Agencia de Protección de Datos con dientes. Derechos ARCO+ ampliados (incluye portabilidad y bloqueo). Categorías especiales: biométricos, salud, financieros, de menores. Régimen sancionatorio efectivo. Notificación obligatoria de brechas.</p>
+        <p style="margin-top:8px;font-size:13px;"><strong style="color:var(--text);">Fuente:</strong> <a href="https://www.bcn.cl/leychile/navegar?idNorma=1209272" target="_blank" style="color:var(--orange);">BCN texto ley (idNorma=1209272)</a></p>
+      </div>
+      <div class="card">
+        <div class="meta">Pro Consumidor · escalonada desde dic 2021</div>
+        <h3>Ley 21.398 · SERNAC Financiero reforzado</h3>
+        <p>Análisis obligatorio de solvencia antes de cursar crédito. Plazo máximo 5 días hábiles para certificados de deuda. Garantía legal ampliada de 3 a 6 meses. Aplica si Chispla deriva al usuario a un crédito social.</p>
+        <p style="margin-top:8px;font-size:13px;"><strong style="color:var(--text);">Fuentes:</strong> <a href="https://www.bcn.cl/leychile/navegar?idNorma=1170464" target="_blank" style="color:var(--orange);">BCN texto ley</a> · <a href="https://www.sernac.cl/portal/618/w3-propertyvalue-27771.html" target="_blank" style="color:var(--orange);">SERNAC reclamos</a></p>
+      </div>
+      <div class="card">
+        <div class="meta">Vigente desde 20 jun 2022</div>
+        <h3>Ley 21.459 · Delitos Informáticos</h3>
+        <p>Adapta el Código Penal al Convenio de Budapest. Cubre fraude informático (relevante para fintech), acceso ilícito, interceptación, falsificación. Marco para el Track 02 pero también nos protege a nosotros como operadores.</p>
+        <p style="margin-top:8px;font-size:13px;"><strong style="color:var(--text);">Fuente:</strong> <a href="https://www.bcn.cl/leychile/navegar?idNorma=1177743" target="_blank" style="color:var(--orange);">BCN texto ley (idNorma=1177743)</a></p>
+      </div>
+      <div class="card">
+        <div class="meta">ANCI vigente desde ene 2025</div>
+        <h3>Ley 21.663 · Marco de Ciberseguridad</h3>
+        <p>Reportes al CSIRT Nacional con plazos: 3 horas alerta temprana, 72 horas descripción, 15 días informe completo. Las fintech reguladas CMF están dentro del perímetro. Si vamos a piloto integrado a Caja, encajamos en su flujo ANCI.</p>
+        <p style="margin-top:8px;font-size:13px;"><strong style="color:var(--text);">Fuentes:</strong> <a href="https://www.bcn.cl/leychile/navegar?idNorma=1202434" target="_blank" style="color:var(--orange);">BCN texto ley</a> · <a href="https://anci.gob.cl/normativa/leyes/" target="_blank" style="color:var(--orange);">ANCI normativa</a> · <a href="https://csirt.gob.cl" target="_blank" style="color:var(--orange);">CSIRT</a></p>
+      </div>
+      <div class="card">
+        <div class="meta">Bases del consumidor</div>
+        <h3>Ley 19.496 + Ley 20.555</h3>
+        <p>Ley 19.496 es la base general de derechos del consumidor. Ley 20.555 es SERNAC Financiero original. Las dos siguen vigentes y son la base sobre la que se construye Ley 21.398.</p>
+        <p style="margin-top:8px;font-size:13px;color:var(--text-muted);"><strong style="color:var(--text);">Nota:</strong> el doc oficial Legal Chile del Lab cita estas leyes por nombre, sin URL BCN específica. Si hay que citar texto en demo, buscar en <a href="https://www.bcn.cl/leychile" target="_blank" style="color:var(--orange);">bcn.cl/leychile</a>.</p>
+      </div>
+      <div class="card">
+        <div class="meta">Implementación CMF de la Ley Fintec</div>
+        <h3>NCG 502, 503, 504, 514 + Manual SIF</h3>
+        <p>NCG 502 = registro y obligaciones de prestadores Fintec (RPSF). NCG 503 = competencia de roles. NCG 504 = Art. 65 LMV. NCG 514 = Sistema de Finanzas Abiertas (la regulación de Open Finance, no la 502). Manual SIF = reportería y ciberseguridad.</p>
+        <p style="margin-top:8px;font-size:13px;"><strong style="color:var(--text);">PDFs oficiales:</strong> <a href="https://www.cmfchile.cl/normativa/ncg_502_2024.pdf" target="_blank" style="color:var(--orange);">NCG 502</a> · <a href="https://www.cmfchile.cl/normativa/ncg_514_2024.pdf" target="_blank" style="color:var(--orange);">NCG 514</a> · <a href="https://www.cmfchile.cl/portal/principal/613/w3-propertyname-702.html" target="_blank" style="color:var(--orange);">CMF normativa buscable</a></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h2>Datasets y APIs oficiales — listas para construir</h2>
+      <p>Lo confirmado por el doc oficial del Impact Lab. Las marcadas como ★ son las que cargamos al MCP propio para que el agente cite con URL, sin alucinación.</p>
+    </div>
+    <div class="grid grid-3">
+      <div class="card hot">
+        <div class="meta">★ Pieza central del MCP propio</div>
+        <h3>BCN API Ley Fácil</h3>
+        <p>JSON, gratuita, oficial. Su propósito literal es explicar normas a usuarios finales. Resuelve buena parte del "no alucinar".</p>
+        <p style="margin-top:8px;font-size:13px;"><strong style="color:var(--text);">Endpoint:</strong> <a href="https://www.bcn.cl/api-leyfacil/" target="_blank" style="color:var(--orange);">bcn.cl/api-leyfacil/</a> <em>(devuelve 401 sin auth — registro gratuito requerido)</em></p>
+      </div>
+      <div class="card">
+        <div class="meta">★ Indicadores económicos</div>
+        <h3>Banco Central · API BDE</h3>
+        <p>JSON REST con registro gratuito. Métodos GetSeries, SearchSeries. Soporte Python y R. Útil para series de IPC, endeudamiento, morosidad.</p>
+        <p style="margin-top:8px;font-size:13px;"><strong style="color:var(--text);">Endpoint + docs:</strong> <a href="https://si3.bcentral.cl/SieteRestWS/SieteRestWS.ashx" target="_blank" style="color:var(--orange);">SieteRestWS.ashx</a> · <a href="https://si3.bcentral.cl/estadisticas/Principal1/Web_Services/doc_es.htm" target="_blank" style="color:var(--orange);">doc_es.htm</a></p>
+      </div>
+      <div class="card">
+        <div class="meta">Sin API REST · scraping respetuoso 1 req/s</div>
+        <h3>CMF</h3>
+        <p>Registro Prestadores Fintec (RPSF), normativa buscable, alertas de estafas, CMF Educa. No tiene API REST documentada — descargar PDFs y cachear localmente.</p>
+        <p style="margin-top:8px;font-size:13px;"><strong style="color:var(--text);">URLs:</strong> <a href="https://www.cmfchile.cl/institucional/estadisticas/seg_rgpsf.php" target="_blank" style="color:var(--orange);">RPSF</a> · <a href="https://www.cmfchile.cl/portal/principal/613/w3-propertyname-702.html" target="_blank" style="color:var(--orange);">Normativa</a> · <a href="https://www.cmfchile.cl/portal/principal/613/w3-propertyvalue-43545.html" target="_blank" style="color:var(--orange);">Alertas estafas</a> · <a href="https://www.cmfchile.cl/educa/" target="_blank" style="color:var(--orange);">CMF Educa</a></p>
+      </div>
+      <div class="card">
+        <h3>SII · normativa y resoluciones</h3>
+        <p>Obligaciones tributarias, regímenes Pro PyME, criptoactivos. Resoluciones recientes 113/2025 y 114/2025 (CARF). Descargables como HTML/PDF.</p>
+        <p style="margin-top:8px;font-size:13px;"><strong style="color:var(--text);">URLs:</strong> <a href="https://www.sii.cl/normativa_legislacion/" target="_blank" style="color:var(--orange);">Normativa SII</a> · <a href="https://www.sii.cl/normativa_legislacion/resoluciones/2025/reso114.pdf" target="_blank" style="color:var(--orange);">Res. 114/2025 PDF</a> · <a href="https://www.sii.cl/preguntas_frecuentes/criptomonedas/arbol_faqs_criptomonedas_1653.htm" target="_blank" style="color:var(--orange);">FAQ criptomonedas</a></p>
+      </div>
+      <div class="card">
+        <h3>SERNAC</h3>
+        <p>Derechos del consumidor financiero, mecanismos de reclamo formal, base para derivaciones desde Chispla.</p>
+        <p style="margin-top:8px;font-size:13px;"><strong style="color:var(--text);">URL:</strong> <a href="https://www.sernac.cl/portal/618/w3-propertyvalue-27771.html" target="_blank" style="color:var(--orange);">sernac.cl reclamos consumidor financiero</a></p>
+      </div>
+      <div class="card">
+        <h3>Biblioteca del Congreso Nacional</h3>
+        <p>Textos legales completos para anclar citas (lo que no esté en Ley Fácil).</p>
+        <p style="margin-top:8px;font-size:13px;"><strong style="color:var(--text);">URL:</strong> <a href="https://www.bcn.cl/leychile" target="_blank" style="color:var(--orange);">bcn.cl/leychile</a> <em>(buscar por número o idNorma)</em></p>
+      </div>
+      <div class="card">
+        <h3>INE + CASEN</h3>
+        <p>Ingresos por comuna, ocupación, etnia. Encuesta socioeconómica nacional. Fuente principal para anclar TAM.</p>
+        <p style="margin-top:8px;font-size:13px;"><strong style="color:var(--text);">URLs:</strong> <a href="https://www.ine.gob.cl/eme" target="_blank" style="color:var(--orange);">INE EME (microemprendimiento)</a> · <a href="https://www.ine.gob.cl" target="_blank" style="color:var(--orange);">ine.gob.cl</a></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <h2>Fuentes oficiales auditadas</h2>
+      <p>Cada cifra del pitch debe poder defenderse con un click. Estas son las URLs verificadas que respaldan los números que usamos. Las que están marcadas con ⚠ no se pudieron anclar en publicación oficial — usar con cuidado o reformular.</p>
+    </div>
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="meta">Microemprendedores en Chile</div>
+        <h3>≈2M (INE EME 8, dic 2024)</h3>
+        <p>1.998.178 personas microemprendedoras · 54,2% informales · 86,8% trabajan por cuenta propia · ganancia promedio mensual $828.612 CLP · 40,7% mujeres.</p>
+        <p style="margin-top:8px;"><strong style="color:var(--text);">Fuente:</strong> <a href="https://www.ine.gob.cl/eme" target="_blank" style="color:var(--orange);">ine.gob.cl/eme</a> · <a href="https://www.economia.gob.cl/2023/06/16/ministerio-de-economia-e-ine-presentan-radiografia-de-las-y-los-micro-emprendedores-en-chile.htm" target="_blank" style="color:var(--orange);">Ministerio de Economía (radiografía conjunta INE)</a></p>
+      </div>
+      <div class="card">
+        <div class="meta">Caja Los Andes — participación de mercado</div>
+        <h3>65,86% trabajadores · 66,86% empresas</h3>
+        <p>Datos SUSESO febrero 2023. Lidera la industria de Cajas de Compensación.</p>
+        <p style="margin-top:8px;"><strong style="color:var(--text);">Fuente:</strong> <a href="https://www.cmfchile.cl/institucional/inc/inf_financiera/ifrs/safec_ifrs_verarchivo.php?auth=N2JmNDAyZDAxZWJmYTlhNjIxZmE1ZTVlZjVjOWQ5ZDg%3D" target="_blank" style="color:var(--orange);">Estados Financieros CCAF Los Andes (CMF)</a> · <a href="https://www.suseso.gob.cl/606/w3-propertyvalue-34003.html" target="_blank" style="color:var(--orange);">SUSESO</a></p>
+      </div>
+      <div class="card">
+        <div class="meta">Caja Los Andes — afiliados</div>
+        <h3>+4,3M afiliados (2024)</h3>
+        <p>Más de 4,3M de afiliados directos y +4,4M con familias según resultados 2024.</p>
+        <p style="margin-top:8px;"><strong style="color:var(--text);">Fuente:</strong> <a href="https://www.latercera.com/sociales/noticia/caja-los-andes-presenta-resultados-2024-y-proyecta-expansion-de-su-oferta/" target="_blank" style="color:var(--orange);">La Tercera · Resultados 2024 Caja Los Andes</a> · <a href="https://somosandes.cajalosandes.cl/inversionistas" target="_blank" style="color:var(--orange);">Memoria oficial</a></p>
+      </div>
+      <div class="card">
+        <div class="meta">Fondo LEAP de Caja Los Andes</div>
+        <h3>USD $9M · primer corporate venturing</h3>
+        <p>Brazo de CVC de Caja Los Andes anunciado en MAS Pitch DF (dic 2025). Hasta 5 inversiones por año, target portfolio de 20 startups. Primera inversión: Soyio (USD $325k, identidad digital).</p>
+        <p style="margin-top:8px;"><strong style="color:var(--text);">Fuente:</strong> <a href="https://www.fintechile.org/noticias/caja-los-andes-debuta-en-inversion-en-startups-con-su-primer-respaldo-a-chilena-soyio" target="_blank" style="color:var(--orange);">FinteChile</a> · <a href="https://leap.cajalosandes.cl/" target="_blank" style="color:var(--orange);">leap.cajalosandes.cl</a></p>
+      </div>
+      <div class="card">
+        <div class="meta">TECLA 2025 (8va edición)</div>
+        <h3>Hasta $100M CLP · max $20M por piloto</h3>
+        <p>Tres áreas temáticas: <strong style="color:var(--text);">salud financiera</strong>, digitalización del negocio, desarrollo sostenible. Partners: Fundación Chile, Cardif, Mastercard. Postulaciones cerraron 15-jun-2025.</p>
+        <p style="margin-top:8px;"><strong style="color:var(--text);">Fuente:</strong> <a href="https://somosandes.cajalosandes.cl/innovacion/tecla-2025" target="_blank" style="color:var(--orange);">Caja Los Andes · TECLA 2025</a> · <a href="https://www.df.cl/las-siete-claves-para-participar-en-el-fondo-para-emprendedores-de-caja-los" target="_blank" style="color:var(--orange);">Diario Financiero</a></p>
+      </div>
+      <div class="card">
+        <div class="meta">Ley Fintec — texto y alcance</div>
+        <h3>Ley 21.521 vigente desde 3-feb-2023</h3>
+        <p>Marco legal Fintech: regula servicios financieros tecnológicos, crea Sistema de Finanzas Abiertas (SFA / Open Finance). Aproximadamente 485 empresas tipo fintech operan bajo esta ley en Chile.</p>
+        <p style="margin-top:8px;"><strong style="color:var(--text);">Fuente:</strong> <a href="https://www.bcn.cl/leychile/navegar?idNorma=1187323" target="_blank" style="color:var(--orange);">BCN · texto Ley 21.521</a> · <a href="https://www.cmfchile.cl/educa/621/w3-article-85048.html" target="_blank" style="color:var(--orange);">CMF Educa · Ley Fintec</a></p>
+      </div>
+      <div class="card" style="border-left:3px solid var(--red);">
+        <div class="meta">⚠ Cifras que el doc oficial Impact Lab afirma sin URL</div>
+        <h3>"5 millones de personas se beneficiarían de Ley 21.521"</h3>
+        <p>El doc oficial del track Inclusión Financiera lo afirma textualmente (<code>educacion-financiera.md</code> línea 7), pero no provee fuente verificable. La cita se puede usar atribuyéndola al Lab ("según el doc oficial del Impact Lab"), no a CMF ni a Hacienda. <strong style="color:var(--text);">Recomendación:</strong> usar la frase híbrida que está en la card siguiente.</p>
+      </div>
+      <div class="card" style="border-left:3px solid var(--red);">
+        <div class="meta">⚠ Cifra del doc oficial que el dashboard ya removió</div>
+        <h3>"Menos del 30% entiende obligaciones tributarias digitales"</h3>
+        <p>Esta cifra venía de <code>educacion-financiera.md</code> línea 13 del doc oficial del Lab, también sin URL de respaldo. Se removió del dashboard. Lo que sí tiene URL pública: 51% de microemprendedores opta por no formalizar y 54,2% son informales (<a href="https://www.ine.gob.cl/eme" target="_blank" style="color:var(--orange);">INE EME 8</a>). Esa formulación reemplaza la afirmación anterior y se puede defender con un click.</p>
+      </div>
+      <div class="card strategic-card" style="border-left:3px solid var(--orange);">
+        <div class="meta">★ Frase híbrida sugerida para el bloque Problema (30s) del pitch</div>
+        <h3>"5M del Lab + 2M INE = ataque al subconjunto más doloroso"</h3>
+        <p style="font-size:20px;line-height:1.6;color:var(--text);">"El doc del Impact Lab estima que <strong style="color:var(--orange);">5 millones de personas se beneficiarían de la Ley Fintec</strong>. Nosotros vamos al subconjunto más doloroso: los <strong style="color:var(--orange);">2 millones de microemprendedores que registra el INE</strong>, de los cuales el <strong style="color:var(--orange);">54,2% son informales</strong> porque nunca pasaron el laberinto de SII + municipios + CMF."</p>
+        <p style="margin-top:12px;color:var(--text-muted);font-size:16px;">Esta frase reconoce el dato del doc del Lab (que los jurados leyeron) y aterriza con la cifra anclada del INE. Cubre M2 (datos responsables) sin caer en alucinación, y conecta directamente con el segmento de Chispla.</p>
+      </div>
+    </div>
+    <div class="card" style="margin-top:16px;border-left:3px solid var(--orange);">
+      <div class="meta">Regla del equipo para no perder M2 (Datos responsables · -30% por alucinación grave)</div>
+      <h3>Toda cifra en demo, slides o pitch debe traer URL en máximo un click</h3>
+      <p>Si no encontramos la URL oficial, no se cita el número. Es preferible decir "millones" que decir "5 millones" sin fuente. El mentor regulatorio del Lab usa Bendi para contrastar afirmaciones contra Wiki Legal — alucinación grave nos saca 30 puntos del score total.</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  Construido para el equipo Chispla · Track 01 Inclusión Financiera · Claude Impact Lab Chile 2026 · Espacio Riesco
+</footer>
+
+<script>
+  // === Countdowns ===
+  const TZ_OFFSET = -4 * 60; // Chile UTC-4 in May
+  const targets = {
+    window: new Date('2026-05-06T00:00:00-04:00'),
+    ficha: new Date('2026-05-07T10:00:00-04:00'),
+    tecnico: new Date('2026-05-07T17:00:00-04:00'),
+  };
+  function fmtDelta(ms) {
+    if (ms <= 0) return 'pasado';
+    const total = Math.floor(ms / 1000);
+    const d = Math.floor(total / 86400);
+    const h = Math.floor((total % 86400) / 3600);
+    const m = Math.floor((total % 3600) / 60);
+    return `${d}d ${h}h ${m}m`;
+  }
+  function tickCountdowns() {
+    const now = new Date();
+    document.getElementById('cd-window').textContent = fmtDelta(targets.window - now);
+    document.getElementById('cd-ficha').textContent = fmtDelta(targets.ficha - now);
+    document.getElementById('cd-tecnico').textContent = fmtDelta(targets.tecnico - now);
+  }
+  tickCountdowns();
+  setInterval(tickCountdowns, 30000);
+
+  // === Rúbrica chart (v3.3 · pesos efectivos sobre score 0-100) ===
+  const ctx = document.getElementById('rubricaChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: [
+        'M1 · Problema y ciudadano',
+        'M2 · Datos responsables',
+        'M3 · Uso Claude + agéntico',
+        'M4 · Funciona',
+        'J1 · Pitch en vivo',
+        'J2 · Impacto ciudadano real',
+        'J3 · Demo en vivo',
+      ],
+      datasets: [{
+        data: [10, 10, 18, 13, 17, 17, 15],
+        backgroundColor: ['#f97316', '#a855f7', '#3b82f6', '#22c55e', '#ef4444', '#fb923c', '#22c55e'],
+        borderColor: '#0a0a0a',
+        borderWidth: 3,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: { color: '#a3a3a3', font: { size: 11 }, padding: 12, boxWidth: 10 }
+        },
+        tooltip: { callbacks: { label: (c) => `${c.label}: ${c.parsed} pts` } }
+      },
+      cutout: '60%'
+    }
+  });
+
+  // === Voting ===
+  const voteState = JSON.parse(localStorage.getItem('chispla-votes') || '{}');
+  function applyVotes() {
+    document.querySelectorAll('.vote-btn').forEach(b => {
+      const voter = b.dataset.voter;
+      const opt = b.dataset.opt;
+      b.classList.toggle('active', voteState[voter] === opt);
+    });
+  }
+  function vote(e, voter, opt) {
+    e.stopPropagation();
+    if (voteState[voter] === opt) delete voteState[voter];
+    else voteState[voter] = opt;
+    localStorage.setItem('chispla-votes', JSON.stringify(voteState));
+    applyVotes();
+  }
+  function resetVotes() {
+    Object.keys(voteState).forEach(k => delete voteState[k]);
+    localStorage.removeItem('chispla-votes');
+    applyVotes();
+  }
+  applyVotes();
+
+  // === Option toggle (just for visual emphasis) ===
+  function toggleOption(opt) {
+    document.querySelectorAll('.opt-card').forEach(c => {
+      c.classList.toggle('selected', c.dataset.opt === opt);
+    });
+    localStorage.setItem('chispla-selected-opt', opt);
+  }
+  const savedOpt = localStorage.getItem('chispla-selected-opt');
+  if (savedOpt) toggleOption(savedOpt);
+
+  // === Segments and channels ===
+  function toggleSegment(s) {
+    document.querySelectorAll('.segment-card').forEach(c => c.classList.remove('selected'));
+    event.currentTarget.classList.add('selected');
+  }
+  function toggleChannel(s) {
+    document.querySelectorAll('.channel-card').forEach(c => c.classList.remove('selected'));
+    event.currentTarget.classList.add('selected');
+  }
+
+  // === VP builder ===
+  function updateVP() {
+    const out = document.getElementById('vp-output');
+    if (out.classList.contains('visible')) showVP();
+  }
+  function showVP() {
+    const seg = document.getElementById('vp-segmento').value;
+    const prob = document.getElementById('vp-problema').value;
+    const sol = document.getElementById('vp-solucion').value;
+    const qh = document.getElementById('vp-quehace').value;
+    const ben = document.getElementById('vp-beneficio').value;
+    const can = document.getElementById('vp-canal').value;
+    const out = document.getElementById('vp-output');
+    out.textContent = `Para ${seg} que ${prob}, ${sol} ${qh} para que ${ben}, llegando vía ${can}.`;
+    out.classList.add('visible');
+  }
+
+  // === Checklist ===
+  const checks = [
+    { t: 'Decidir A / B / C como equipo (1 hora)', o: 'Equipo' },
+    { t: 'Validar elección con la rúbrica: ¿pega bien en los 3 criterios de mayor peso?', o: 'Equipo' },
+    { t: 'Asignar roles: vibecoding (Edu), product/UX (?), comercial/pitch (?)', o: 'Lucas' },
+    { t: 'Confirmar acceso a herramientas: Claude Code, Cursor, v0, repo', o: 'Edu' },
+    { t: 'Mapear a quién hablamos en pasillo el día 1: 5 perfiles del Forum', o: 'Equipo' },
+    { t: 'Preparar guion de discovery (3 preguntas para validar el problema)', o: 'Comercial' },
+    { t: 'Cargar fuentes.md con URL oficiales (Ley 21.521, NCG 502, NCG 514, Ley 19.628, Ley 21.398, Ley 19.496)', o: 'Luca' },
+    { t: 'Anotar deadline ficha cívica: 7 mayo 10:00', o: 'Edu' },
+    { t: 'Anotar deadline técnico: 7 mayo 17:00', o: 'Edu' },
+    { t: 'Plan B si la decisión cambia el día 1 después del workshop de Clay', o: 'Equipo' },
+    { t: 'Preparar pregunta puntual para Provoste en el workshop de las 14:00', o: 'Edu' },
+    { t: 'Preparar pregunta puntual para Caja Los Andes en su workshop de 16:00', o: 'Lucas' },
+    { t: 'Definir métrica de éxito del piloto post-evento (lo que justifica un 5/5 en viabilidad)', o: 'Equipo' },
+    { t: 'Compartir este dashboard con Lucas y Luca antes de la reu', o: 'Edu' },
+  ];
+  const checkState = JSON.parse(localStorage.getItem('chispla-checks') || '{}');
+  const list = document.getElementById('checklist');
+  checks.forEach((c, i) => {
+    const div = document.createElement('div');
+    div.className = 'check-item' + (checkState[i] ? ' done' : '');
+    div.innerHTML = `<div class="check-box"></div><span class="check-text">${c.t}</span><span class="check-owner">${c.o}</span>`;
+    div.onclick = () => {
+      checkState[i] = !checkState[i];
+      localStorage.setItem('chispla-checks', JSON.stringify(checkState));
+      div.classList.toggle('done');
+    };
+    list.appendChild(div);
+  });
+</script>
+</body>
+</html>

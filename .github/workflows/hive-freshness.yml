@@ -1,0 +1,32 @@
+name: Hive Freshness Check
+
+# Reminds the team if PROJECT.md hasn't been updated in too long.
+# Runs every 6 hours during the build window.
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+jobs:
+  check-freshness:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check PROJECT.md freshness
+        run: |
+          LAST_UPDATE=$(git log -1 --format=%ct PROJECT.md)
+          NOW=$(date +%s)
+          AGE_HOURS=$(( (NOW - LAST_UPDATE) / 3600 ))
+          echo "PROJECT.md was last updated $AGE_HOURS hours ago."
+          if [ $AGE_HOURS -gt 12 ]; then
+            echo "::warning::PROJECT.md hasn't been updated in $AGE_HOURS hours. The hive may be stale."
+          fi
+
+      - name: Check BLOCKERS.md for active blockers
+        run: |
+          if grep -q "🔴" BLOCKERS.md; then
+            echo "::warning::Active 🔴 blockers in BLOCKERS.md. Someone is stuck."
+            grep "🔴" BLOCKERS.md || true
+          fi

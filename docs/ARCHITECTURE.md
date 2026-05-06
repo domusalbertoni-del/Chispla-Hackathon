@@ -15,7 +15,7 @@ flowchart TB
     Landing[Landing pública Next.js<br/>QR + qué hace + datos]
     Hook[/api/whatsapp/route.ts<br/>Webhook Kapso/]
     Agent[Claude Agent SDK<br/>Sonnet 4.6 default · Opus 4.7 escala · Haiku 4.5 clasifica]
-    MCP[MCP server propio<br/>Vercel serverless · HTTP transport]
+    MCP[MCP server propio<br/>Railway service · HTTP transport]
     PG[(Supabase Postgres<br/>+ pgvector + RLS<br/>sa-east-1)]
     BCN[BCN API Ley Fácil]
     CMF[(PDFs CMF cacheados<br/>NCG 502, 514, Manual SIF)]
@@ -50,7 +50,7 @@ flowchart TB
 - **Stack:** Next.js 16 App Router · Tailwind · shadcn/ui
 - **Responsabilidades:** página pública con QR para iniciar conversación en WhatsApp, explicación de qué responde Chispla, lista de datos oficiales que consume (CMF, SII, BCN, SERNAC), disclaimers legales, créditos del equipo.
 - **No es:** UI conversacional para usuarios. Los usuarios hablan SOLO por WhatsApp.
-- **Deploy:** Vercel.
+- **Deploy:** Railway service `chispla` (URL `chispla.up.railway.app` por default).
 
 ### 2. Kapso (canal WhatsApp)
 - **Owner:** Edo
@@ -58,11 +58,12 @@ flowchart TB
 - **Responsabilidades:** ingesta de mensajes WhatsApp, envío de respuestas, adjuntos (PDFs vía Files API), state machine de la conversación (onboarding, branching, recolección de campos).
 - **Lo que NO hace:** razonamiento. Cualquier decisión sustantiva pasa por Claude.
 
-### 3. Backend Vercel (webhook + agent loop)
+### 3. Backend Railway (webhook + agent loop)
 - **Owner:** Edo
 - **Live at:** `app/app/api/whatsapp/route.ts`
-- **Stack:** Next.js API route · Node.js runtime
-- **Responsabilidades:** recibe webhook Kapso, valida firma, normaliza mensaje, invoca Agent SDK, devuelve respuesta a Kapso (opcionalmente con file_id de Files API).
+- **Stack:** Next.js 16 App Router · Node.js runtime · containers persistentes (Railway), no cold starts
+- **Responsabilidades:** recibe webhook Kapso, valida firma HMAC, normaliza mensaje, invoca Agent SDK, devuelve respuesta a Kapso (opcionalmente con file_id de Files API).
+- **Cron jobs (Railway nativo):** check-ins proactivos por WhatsApp 24h después del último mensaje del usuario, recordatorios de deadlines (F22, F29, vencimiento patente).
 - **Time budget por respuesta:** target <30s end-to-end (sub-check J3.3).
 
 ### 4. Agent layer (Claude Agent SDK)
@@ -76,7 +77,7 @@ flowchart TB
 
 ### 5. MCP server (corazón técnico)
 - **Owner:** Lucas
-- **Stack:** TypeScript · `@modelcontextprotocol/sdk` · deploy en Vercel serverless con HTTP transport.
+- **Stack:** TypeScript · `@modelcontextprotocol/sdk` · deploy en Railway como servicio separado (`mcp.up.railway.app`) con HTTP transport. Servicio independiente del frontend para reforzar el claim "infraestructura, no producto" — un MCP público que cualquier institución (Caja, Clay, Coopeuch) puede consumir desde Claude Desktop / Cursor / su propio agente.
 - **Tools expuestas:**
   - `search_normativa({ query, source?, profile?, lang? })` → vector search sobre CMF/SII/SERNAC + chunks citados
   - `get_ley_facil({ law_id })` → proxy a BCN Ley Fácil API
@@ -152,8 +153,8 @@ flowchart TB
 
 ## Security & secrets
 
-- `ANTHROPIC_API_KEY` — Vercel env var, nunca en cliente
-- `OPENAI_API_KEY` — Vercel env var, solo en pipeline de ingest
+- `ANTHROPIC_API_KEY` — Railway env var, nunca en cliente
+- `OPENAI_API_KEY` — Railway env var, solo en pipeline de ingest
 - `SUPABASE_SERVICE_ROLE_KEY` — server only, nunca expuesta
 - `SUPABASE_ANON_KEY` — pública con RLS estricto detrás
 - `KAPSO_WEBHOOK_SECRET` — validación HMAC del webhook

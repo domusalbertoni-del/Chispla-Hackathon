@@ -12,7 +12,7 @@ For anyone opening a business in Chile for the first time, Chispla builds a comp
 
 | Folder | What | Owner |
 |--------|------|-------|
-| `app/` | Backend + API routes (Vercel serverless) | Edo + Luca |
+| `app/` | Backend + landing + API routes (Railway containers) | Edo + Luca |
 | `mcp-server/` | TypeScript MCP server (regulatory data) | Lucas + Luca |
 | `docs/` | Team coordination, war-room dashboard, decisions | Everyone |
 
@@ -40,7 +40,7 @@ cd mcp-server && npm install && npm run dev
 - BCN API Ley Fácil + cached SII/CMF PDFs
 - Files API (pre-filled PDF forms)
 - OpenAI embeddings (text-embedding-3-small)
-- Vercel deployment
+- Railway deployment (Next.js app + MCP server as separate service)
 
 ## Key Principle
 

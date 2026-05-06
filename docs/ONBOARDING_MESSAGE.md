@@ -35,8 +35,8 @@ Es un repo de markdown (no es el producto, es el contexto). Cada uno lo clona y 
 
 Para el martes (mañana) la idea es:
 - Yo: hive listo + Drive folder + Calendar compartido + research stakeholders
-- Lucas: scraping de normas a JSON estructurado + MCP server v0 deployado en Vercel
-- Edo: Next.js scaffold con Lovable + chat UI + selector de persona
+- Lucas: scraping de normas a JSON estructurado + MCP server v0 deployado en Railway
+- Edo: Next.js scaffold + landing pública con QR + webhook Kapso (sin Lovable, agente vive en WhatsApp)
 
 Si están atascados >30 min en algo, lo escriben en `BLOCKERS.md` y siguen con otra cosa. Que la IA lea el blocker después y nos ayude.
 

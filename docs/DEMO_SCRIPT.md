@@ -119,7 +119,7 @@ R: No respondemos desde memoria del modelo. El agente está obligado por system 
 
 ### Q: ¿Cómo se mantienen las normas al día?
 
-R: El MCP re-scrapea diario en cron de Vercel. CMF y SII publican normativa con URL predictibles. BCN Ley Fácil API es JSON oficial. Versionado en Supabase con `published_at` para que el agente diga "según la versión vigente al [fecha]".
+R: El MCP re-scrapea diario en cron nativo de Railway. CMF y SII publican normativa con URL predictibles. BCN Ley Fácil API es JSON oficial. Versionado en Supabase con `published_at` para que el agente diga "según la versión vigente al [fecha]".
 
 ### Q: ¿Modelo de negocio?
 

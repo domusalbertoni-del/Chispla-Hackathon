@@ -29,8 +29,8 @@ We are vibecoders. We ship fast. We prefer working code over architecture purity
 chispla/
 ├── CLAUDE.md          ← You are here
 ├── docs/              ← Team coordination (decisions, blockers, personas, dashboard)
-├── app/               ← Backend + API routes (Vercel serverless)
-├── mcp-server/        ← TypeScript MCP server (Vercel serverless)
+├── app/               ← Backend + API routes (Railway containers persistentes)
+├── mcp-server/        ← TypeScript MCP server (Railway containers persistentes)
 └── .github/           ← CI/CD
 ```
 
@@ -70,13 +70,13 @@ The Track 1 jury is Anthropic + FinteChile + CMF + Clay + Caja Los Andes. We are
 - **Opus 4.7 quirk:** never send `temperature`, `top_p`, `top_k`, or `budget_tokens` — returns 400.
 - **Agent runtime:** `@anthropic-ai/claude-agent-sdk` (NOT raw SDK, NOT LangChain).
 - **WhatsApp:** via Kapso (WhatsApp Business API integration).
-- **Backend:** Vercel serverless functions.
+- **Backend:** Railway containers persistentes functions.
 - **Database:** Supabase (Postgres + pgvector + Auth). Region sa-east-1. RLS strict.
 - **Embeddings:** OpenAI `text-embedding-3-small` (only allowed non-Claude AI use; embeddings are math not reasoning).
-- **MCP server:** Standalone TypeScript, deployed as Vercel serverless function.
+- **MCP server:** Standalone TypeScript, deployed as Railway containers persistentes function.
 - **Data sources:** BCN API Ley Fácil (JSON, free, official) + cached PDFs from CMF/SII.
 - **Files API:** For delivering pre-filled PDF forms to users.
-- **Deploy:** Vercel + Supabase. Repo private until demo, public after.
+- **Deploy:** Railway (Next.js app + cron) + Supabase sa-east-1 (Postgres + pgvector + RLS). Railway chosen for speed: account already exists, persistent containers, built-in cron for proactive WhatsApp check-ins. Repo private until demo, public after.
 - **Prompt caching:** required for the regulatory context block.
 
 ## Forbidden

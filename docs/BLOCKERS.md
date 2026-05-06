@@ -10,25 +10,17 @@
 
 ## Active
 
-🟡 **[Edo] [2026-05-06 15:30] — Desalineamiento docs/ pre-rebrand vs CLAUDE.md + dashboard**
+(no active blockers)
 
-**Qué pasa:** `CLAUDE.md` (post-rebrand "Chispla") y `docs/chispla-dashboard.html` describen el producto actual: **WhatsApp via Kapso · playbook de formalización con PDFs pre-rellenados · pitch 3+2 con hook "Luca está acá conmigo" · personas microempresarios primera generación**.
+---
 
-Pero los docs `docs/ARCHITECTURE.md`, `docs/DEMO_SCRIPT.md` y `docs/PERSONAS.md` describen el producto **pre-rebrand**: web app con dropdown de 4 personas (foreign founder + pensioner + first-gen + migrant) · Next.js + Lovable · Google Calendar export como wow moment · pitch 4+1 con apertura "Hace tres meses abrí una empresa".
+## Resolved
 
-**Por qué importa:** Lucas está owner de MCP y la implementación va a leer `ARCHITECTURE.md` para construir. Si construye el web app de 4 personas, no la integración WhatsApp de microempresarios, el demo del 7-may no calza con el pitch.
+🟢 **[Edo] [2026-05-06 16:00] — Desalineamiento docs/ pre-rebrand vs CLAUDE.md + dashboard**
 
-**Qué se hizo:**
-- Dashboard corregido a v3.3 (rúbrica oficial 7-checks, gates con penalizaciones tipadas, fuentes ancladas con URL).
-- `docs/data/` agregado con snapshot del API del Lab (rúbrica oficial v3.3 confirma estructura mentor 40% + juez 60%).
-- Este blocker abierto.
+**Qué pasaba:** `docs/ARCHITECTURE.md`, `docs/DEMO_SCRIPT.md` y `docs/PERSONAS.md` describían el producto pre-rebrand (web + Lovable + Calendar + 4 personas con dropdown). `CLAUDE.md` y el dashboard describían el producto vigente (WhatsApp via Kapso + Files API + microemprendedores formalizando + pitch 3+2 con hook "Luca está acá conmigo").
 
-**Decisión que falta:** ¿Cuál es el producto de verdad? Opciones:
-1. WhatsApp + formalización (lo que dice CLAUDE.md). Actualizar ARCHITECTURE/DEMO_SCRIPT/PERSONAS.
-2. Web + 4 personas (lo que dicen los docs). Actualizar CLAUDE.md y el dashboard.
-3. Híbrido: backend único, dos canales (WhatsApp + web).
-
-**Quien decide:** Luca + Lucas + Edo en Discord/standup. Antes del workshop Clay 6-may 14:00 idealmente.
+**Resolución:** confirmado por el equipo que el producto canónico es el de CLAUDE.md (WhatsApp + Files API). Lovable y Google Calendar export están **fuera** del producto final. Los 3 docs se reescribieron a la spec WhatsApp en el commit `[hash a llenar tras commit]`. La arquitectura ahora explicita: agente solo en WhatsApp via Kapso, landing pública en Next.js solo para QR + info, PDFs pre-rellenados como wow vía Files API, detección de perfil implícita por contenido del primer mensaje (no dropdown).
 
 ---
 

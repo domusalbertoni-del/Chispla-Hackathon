@@ -60,10 +60,28 @@
 
 | Item | URL | Format | Status |
 |------|-----|--------|--------|
-| Crédito Social — términos y tasas | https://www.cajalosandes.cl/ (find product page) | HTML | ⬜ |
-| APV — guía afiliados | https://www.cajalosandes.cl/ | HTML | ⬜ |
-| Beneficios pensionados | https://www.cajalosandes.cl/ | HTML | ⬜ |
-| Subsidio cesantía | https://www.cajalosandes.cl/ | HTML | ⬜ |
+| Crédito Social — términos y tasas | https://www.cajalosandes.cl/creditos/credito-social | HTML | ⬜ |
+| APV — guía afiliados | https://mismetas.cajalosandes.cl/productos/ahorro-apv | HTML | ⬜ |
+| Subsidio cesantía | https://www.cajalosandes.cl/apoyo-social/subsidio-de-cesantia | HTML | ⬜ |
+
+### Templates PDF para wow moment (Files API)
+
+Estos son los formularios oficiales que Chispla pre-rellena con datos del usuario y entrega adjuntos en WhatsApp.
+
+| Template | Para qué | URL oficial | Status |
+|------|------|------|------|
+| F4415_PJ.pdf | SII inicio actividades persona jurídica | https://www.sii.cl/formularios/imagen/F4415_PJ.pdf | ⬜ |
+| F4415_PN.pdf | SII inicio actividades persona natural | https://www.sii.cl/formularios/imagen/F4415_PN.pdf | ⬜ |
+| F4415.pdf (general) | SII inicio actividades formato unificado | https://www.sii.cl/formularios/imagen/F4415.pdf | ⬜ |
+| Material informativo SII PJ | Guía oficial de inicio de actividades para personas jurídicas | https://www.sii.cl/material_inf/inicio_actividad_juridica.pdf | ⬜ |
+| Patente Providencia (F-A1) | Solicitud patente comercial e industrial autocompletable | https://providencia.cl/provi/site/docs/20191017/20191017122917/solicitud_de_patente_comercial_e_industrial_01_01_2020_autocompletable.pdf | ⬜ |
+| Patente Santiago (R-91) | Nueva patente Santiago | https://www.santiagoenlinea.cl/wp-content/uploads/2014/05/R-91-FORMULARIO-NUEVA-PATENTE-2017-V1-3.pdf | ⬜ |
+
+**Storage:** los templates descargados viven en `app/templates/pdfs/` versionados en el repo. El backend los abre con `pdf-lib`, llena los campos desde el JSON que devuelve Claude, y sube el PDF resultante a Anthropic Files API. El `file_id` retornado va en la respuesta a Kapso.
+
+**Disclaimer obligatorio en cada PDF entregado:** marca de agua "Borrador no oficial · Chispla · Verifica en SII / municipio antes de presentar · No es asesoría legal."
+
+**Nota legal:** Ley 21.210 obliga a presentar inicio de actividades en SII por internet (Mi SII) salvo excepciones. El PDF Chispla sirve como **checklist visual de qué información tener lista** + respaldo para personas que llenan en papel. Las patentes municipales sí se siguen presentando vía formulario PDF en muchas comunas.
 
 ---
 

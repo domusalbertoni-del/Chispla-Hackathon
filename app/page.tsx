@@ -120,24 +120,19 @@ export default function Home() {
           </div>
 
           {/* Right: QR card */}
-          <div className="flex flex-col items-center gap-5">
-            <div className="relative">
-              <div
-                className="absolute -inset-3 rounded-3xl bg-gradient-to-br from-blue-100 via-white to-orange-100 blur-2xl"
-                aria-hidden
-              />
+          <div className="flex flex-col items-center gap-4">
+            <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-900/5 ring-1 ring-slate-900/5">
               <QrButton url={WHATSAPP_URL} size={220} />
+              <div className="mt-4 flex items-center justify-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-800">
+                <span className="relative inline-block h-2 w-2 rounded-full bg-emerald-500">
+                  <span className="live-dot absolute inset-0 text-emerald-500" />
+                </span>
+                Agente activo
+              </div>
             </div>
 
-            <div className="flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-800">
-              <span className="relative inline-block h-2 w-2 rounded-full bg-emerald-500">
-                <span className="live-dot absolute inset-0 text-emerald-500" />
-              </span>
-              Agente activo · responde ahora
-            </div>
-
-            <p className="max-w-[220px] text-center text-xs text-slate-500">
-              Apunta la cámara al QR para abrir la conversación
+            <p className="max-w-[240px] text-center text-xs text-slate-500">
+              Apunta la cámara al QR para abrir la conversación en WhatsApp
             </p>
           </div>
         </div>

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createHmac, timingSafeEqual } from "node:crypto";
 import {
   normalizeWebhook,
   verifySignature,
@@ -7,10 +8,21 @@ import {
 import { runAgent } from "@/lib/agent";
 import { markRead, sendText } from "@/lib/kapso";
 
+// ─── Config ────────────────────────────────────────────────────────────────
+
+// Kapso v2 webhooks (formato propio de Kapso · header X-Webhook-Signature).
+// Este es el secret que aparece en la UI Kapso → Webhook → "Secret".
+const KAPSO_WEBHOOK_SECRET = process.env.KAPSO_WEBHOOK_SECRET;
+
+// Meta forward webhooks (Kapso reenvía el payload original de Meta sin tocar).
+// Este es el "Meta App Secret" de la WhatsApp Business config.
 const META_APP_SECRET = process.env.META_APP_SECRET;
+
+// Token para el GET verification challenge (cuando el endpoint se registra
+// directamente con Meta). En modo Kapso v2 NO se usa.
 const WEBHOOK_VERIFY_TOKEN = process.env.WEBHOOK_VERIFY_TOKEN;
 
-// Tipo mínimo del payload normalizado que producimos para procesar
+// Tipo mínimo del mensaje normalizado que pasamos al agente
 type NormalizedMessage = {
   from: string;
   id: string;
@@ -18,9 +30,7 @@ type NormalizedMessage = {
   phoneNumberId: string;
 };
 
-// ───────────────────────────────────────────────────────────────────────────
-// GET — Meta verification challenge
-// ───────────────────────────────────────────────────────────────────────────
+// ─── GET · Meta verification challenge ────────────────────────────────────
 
 export async function GET(req: NextRequest) {
   const mode = req.nextUrl.searchParams.get("hub.mode");
@@ -33,42 +43,50 @@ export async function GET(req: NextRequest) {
   return new NextResponse("Forbidden", { status: 403 });
 }
 
-// ───────────────────────────────────────────────────────────────────────────
-// POST — Inbound WhatsApp message via Kapso
-// ───────────────────────────────────────────────────────────────────────────
+// ─── POST · Inbound webhook (Kapso v2 o Meta forward) ─────────────────────
 
 export async function POST(req: NextRequest) {
   try {
     const rawBody = await req.text();
-    const signature = req.headers.get("x-hub-signature-256") ?? "";
 
-    // 1. Signature verify (Meta App Secret · HMAC-SHA256)
-    if (META_APP_SECRET) {
-      const ok = verifySignature({
-        appSecret: META_APP_SECRET,
-        rawBody: Buffer.from(rawBody),
-        signatureHeader: signature,
-      });
-      if (!ok) {
-        console.warn("[Kapso webhook] invalid signature");
-        return new NextResponse("Unauthorized", { status: 401 });
-      }
-    } else if (process.env.NODE_ENV === "production") {
+    // Lee ambos posibles headers de firma. Cada modo de Kapso usa uno distinto.
+    const kapsoSig =
+      req.headers.get("x-webhook-signature") ??
+      req.headers.get("x-kapso-signature") ??
+      "";
+    const metaSig = req.headers.get("x-hub-signature-256") ?? "";
+    const eventName = req.headers.get("x-webhook-event") ?? "";
+    const idempotencyKey = req.headers.get("x-idempotency-key") ?? "";
+
+    // 1. Verificar firma según el modo activo.
+    const verifyResult = verifyAnySignature(rawBody, {
+      kapsoSig,
+      metaSig,
+    });
+    if (!verifyResult.ok) {
       console.warn(
-        "[Kapso webhook] META_APP_SECRET missing — accepting unverified payload (dev only)",
+        `[Kapso webhook] signature verification failed (${verifyResult.reason}) · idempotency=${idempotencyKey}`,
       );
+      return new NextResponse("Unauthorized", { status: 401 });
+    }
+    if (verifyResult.warning) {
+      console.warn(`[Kapso webhook] ${verifyResult.warning}`);
     }
 
-    // 2. Parse + normalize payload across the 3 formats
+    // 2. Parse + normalize payload (3 formatos posibles)
     const body = JSON.parse(rawBody);
     const messages = extractMessages(body);
 
+    console.log(
+      `[Kapso webhook] event=${eventName || "unknown"} mode=${verifyResult.mode} messages=${messages.length} idempotency=${idempotencyKey}`,
+    );
+
     if (messages.length === 0) {
-      // Status updates, delivery receipts, otros eventos — ack y salir
+      // Status updates, delivery receipts, otros eventos sin texto procesable
       return NextResponse.json({ status: "ok", processed: 0 });
     }
 
-    // 3. Procesar cada mensaje (en serie · típicamente es 1)
+    // 3. Procesar cada mensaje
     let processed = 0;
     for (const msg of messages) {
       try {
@@ -85,24 +103,117 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ status: "ok", processed });
   } catch (err) {
     console.error("[Kapso webhook] handler error:", err);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 },
+    );
   }
 }
 
-// ───────────────────────────────────────────────────────────────────────────
-// Helpers
-// ───────────────────────────────────────────────────────────────────────────
+// ─── Verificación de firma ────────────────────────────────────────────────
+
+type VerifyResult =
+  | { ok: true; mode: "kapso-v2" | "meta-forward" | "unverified"; warning?: string }
+  | { ok: false; mode: "kapso-v2" | "meta-forward"; reason: string };
+
+function verifyAnySignature(
+  rawBody: string,
+  headers: { kapsoSig: string; metaSig: string },
+): VerifyResult {
+  // Modo Kapso v2 (configurado en este proyecto)
+  if (headers.kapsoSig) {
+    if (!KAPSO_WEBHOOK_SECRET) {
+      // Sin secret configurado, aceptamos en dev y warneamos en producción
+      if (process.env.NODE_ENV === "production") {
+        return {
+          ok: true,
+          mode: "unverified",
+          warning:
+            "X-Webhook-Signature present but KAPSO_WEBHOOK_SECRET not configured · accepting in production with WARNING",
+        };
+      }
+      return { ok: true, mode: "unverified", warning: "dev mode · no secret" };
+    }
+    const valid = verifyKapsoSignature(rawBody, headers.kapsoSig, KAPSO_WEBHOOK_SECRET);
+    return valid
+      ? { ok: true, mode: "kapso-v2" }
+      : { ok: false, mode: "kapso-v2", reason: "kapso HMAC mismatch" };
+  }
+
+  // Modo Meta forward (Kapso reenvía Meta payload con su firma original)
+  if (headers.metaSig) {
+    if (!META_APP_SECRET) {
+      if (process.env.NODE_ENV === "production") {
+        return {
+          ok: true,
+          mode: "unverified",
+          warning: "Meta sig present but META_APP_SECRET not configured",
+        };
+      }
+      return { ok: true, mode: "unverified", warning: "dev · no Meta secret" };
+    }
+    const valid = verifySignature({
+      appSecret: META_APP_SECRET,
+      rawBody: Buffer.from(rawBody),
+      signatureHeader: headers.metaSig,
+    });
+    return valid
+      ? { ok: true, mode: "meta-forward" }
+      : { ok: false, mode: "meta-forward", reason: "meta HMAC mismatch" };
+  }
+
+  // Sin headers de firma — solo aceptar en dev
+  if (process.env.NODE_ENV === "production") {
+    return {
+      ok: true,
+      mode: "unverified",
+      warning: "no signature headers present · accepting (review immediately)",
+    };
+  }
+  return { ok: true, mode: "unverified", warning: "dev · unsigned" };
+}
 
 /**
- * Extrae mensajes inbound text del payload, soportando los 3 formatos que
- * Kapso puede enviar (batched, single, Meta standard).
+ * HMAC-SHA256 de Kapso v2.
+ *
+ * Soporta tanto el formato `sha256=<hex>` como solo `<hex>` plano. La
+ * comparación usa timingSafeEqual para evitar timing attacks.
+ */
+function verifyKapsoSignature(
+  rawBody: string,
+  signatureHeader: string,
+  secret: string,
+): boolean {
+  try {
+    const expected = createHmac("sha256", secret)
+      .update(rawBody, "utf8")
+      .digest("hex");
+    const actual = signatureHeader.replace(/^sha256=/, "").trim();
+    if (expected.length !== actual.length) return false;
+    return timingSafeEqual(
+      Buffer.from(expected, "hex"),
+      Buffer.from(actual, "hex"),
+    );
+  } catch (err) {
+    console.warn("[Kapso webhook] verifyKapsoSignature error:", err);
+    return false;
+  }
+}
+
+// ─── Extracción de mensajes ───────────────────────────────────────────────
+
+/**
+ * Soporta los 3 formatos de payload Kapso:
+ *   1. Kapso v2 batched: { type: 'whatsapp.message.received', data: [...] }
+ *   2. Kapso single event: { message, phone_number_id, conversation }
+ *   3. Meta standard: usar normalizeWebhook del SDK
  */
 function extractMessages(body: unknown): NormalizedMessage[] {
   const out: NormalizedMessage[] = [];
   if (!body || typeof body !== "object") return out;
   const b = body as Record<string, unknown>;
 
-  // Formato Kapso Batched: { type: 'whatsapp.message.received', data: [...] }
+  // Formato Kapso Batched
   if (b.type === "whatsapp.message.received" && Array.isArray(b.data)) {
     for (const item of b.data as Array<Record<string, unknown>>) {
       const message = item.message as Record<string, unknown> | undefined;
@@ -111,7 +222,7 @@ function extractMessages(body: unknown): NormalizedMessage[] {
         (item.phoneNumberId as string | undefined);
       if (!message || !phoneNumberId) continue;
 
-      // Skip outbound (mensajes que TÚ enviaste reflejados de vuelta)
+      // Skip outbound (mensajes que enviamos nosotros, reflejados de vuelta)
       const kapso = message.kapso as { direction?: string } | undefined;
       if (kapso?.direction === "outbound") continue;
 
@@ -121,7 +232,7 @@ function extractMessages(body: unknown): NormalizedMessage[] {
     return out;
   }
 
-  // Formato Kapso Single Event: { message, phone_number_id }
+  // Formato Kapso Single Event
   if (b.message && b.phone_number_id) {
     const norm = toNormalized(
       b.message as Record<string, unknown>,
@@ -131,7 +242,7 @@ function extractMessages(body: unknown): NormalizedMessage[] {
     return out;
   }
 
-  // Formato Meta estándar (entry/changes/value/messages) — usar normalizer del SDK
+  // Formato Meta estándar (entry/changes/value/messages)
   try {
     const normalized = normalizeWebhook(body);
     const phoneNumberId = normalized.phoneNumberId;
@@ -156,7 +267,6 @@ function toNormalized(
   phoneNumberId: string,
 ): NormalizedMessage | null {
   if (message.type !== "text") {
-    // Audio / image / interactive — pendiente para roadmap, ignorar por ahora
     console.log(
       `[Kapso webhook] ignoring non-text message type: ${message.type}`,
     );
@@ -183,13 +293,8 @@ function extractTextBody(text: unknown): string {
   return "";
 }
 
-/**
- * Procesa un mensaje inbound: marca leído → corre el agente Claude → envía respuesta.
- *
- * El PDF F4415_PJ pre-rellenado se entrega en una versión posterior — por ahora
- * solo enviamos texto (la conversación con citas + URLs cubre los sub-checks de
- * la rúbrica · M3.B1 system prompt + M3.B2 tools + B3 mensajes en consola).
- */
+// ─── Procesamiento del mensaje ────────────────────────────────────────────
+
 async function processMessage(msg: NormalizedMessage) {
   // Marcar leído (best-effort, no bloquea)
   await markRead({ phoneNumberId: msg.phoneNumberId, messageId: msg.id });

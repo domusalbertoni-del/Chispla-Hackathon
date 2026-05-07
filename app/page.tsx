@@ -12,13 +12,7 @@ import {
 } from "lucide-react";
 
 import { QrButton } from "./components/QrButton";
-import {
-  CONVERSACIONES,
-  EQUIPO,
-  FUENTES,
-  WHATSAPP_DISPLAY,
-  WHATSAPP_URL,
-} from "@/lib/data";
+import { CONVERSACIONES, FUENTES, WHATSAPP_URL } from "@/lib/data";
 
 export default function Home() {
   return (
@@ -69,12 +63,9 @@ export default function Home() {
                 Abrir WhatsApp
                 <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
               </a>
-              <div className="flex flex-col text-sm">
-                <span className="text-slate-500">o escribe a</span>
-                <span className="font-mono font-semibold text-slate-900">
-                  {WHATSAPP_DISPLAY}
-                </span>
-              </div>
+              <span className="text-sm text-slate-500">
+                o escanea el QR
+              </span>
             </div>
 
             {/* Stats inline */}
@@ -489,60 +480,6 @@ export default function Home() {
                 </p>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ─── EQUIPO ────────────────────────────────────────── */}
-      <section className="border-b border-slate-200 bg-slate-50 py-24">
-        <div className="mx-auto max-w-5xl px-6 lg:px-8">
-          <div className="mb-14 text-center">
-            <span className="mb-3 inline-block text-xs font-semibold uppercase tracking-[0.2em] text-blue-700">
-              Equipo Chispla
-            </span>
-            <h2 className="font-heading text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
-              Quién está detrás
-            </h2>
-            <p className="mt-5 text-lg leading-relaxed text-slate-700">
-              Tres builders. Track 01 · Inclusión Financiera. Construido
-              en 48 horas durante el Claude Impact Lab Chile 2026.
-            </p>
-          </div>
-
-          <div className="grid gap-6 md:grid-cols-3">
-            {EQUIPO.map((p, idx) => {
-              const initials = p.nombre
-                .split(" ")
-                .map((n) => n[0])
-                .slice(0, 2)
-                .join("");
-              const gradients = [
-                "from-blue-400 to-blue-600",
-                "from-orange-400 to-orange-600",
-                "from-teal-500 to-teal-700",
-              ];
-              return (
-                <article
-                  key={p.nombre}
-                  className="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
-                >
-                  <div
-                    className={`mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${gradients[idx]} font-heading text-lg font-bold text-white shadow-md`}
-                  >
-                    {initials}
-                  </div>
-                  <h3 className="font-heading text-xl font-semibold text-slate-900">
-                    {p.nombre}
-                  </h3>
-                  <p className="mt-1 text-sm font-medium text-blue-700">
-                    {p.rol}
-                  </p>
-                  <p className="mt-3 text-sm leading-relaxed text-slate-700">
-                    {p.nota}
-                  </p>
-                </article>
-              );
-            })}
           </div>
         </div>
       </section>

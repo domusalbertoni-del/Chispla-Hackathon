@@ -14,7 +14,9 @@
     "@modelcontextprotocol/sdk": "^1.29.0",
     "@supabase/ssr": "^0.10.2",
     "@supabase/supabase-js": "^2.105.3",
+    "lucide-react": "^0.469.0",
     "next": "^16.2.5",
+    "qrcode.react": "^4.2.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "zod": "^4.0.0"

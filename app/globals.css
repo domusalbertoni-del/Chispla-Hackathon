@@ -1,1 +1,50 @@
 @import "tailwindcss";
+
+@theme {
+  --font-heading: var(--font-lexend), system-ui, sans-serif;
+  --font-body: var(--font-source-sans), system-ui, sans-serif;
+
+  /* Brand palette — locked en design-system/chispla/pages/landing.md */
+  --color-brand-blue: oklch(0.55 0.21 264); /* blue-600 #2563EB */
+  --color-brand-blue-deep: oklch(0.42 0.22 264); /* blue-800 */
+  --color-brand-orange: oklch(0.74 0.18 53); /* orange-500 #F97316 */
+  --color-brand-teal: oklch(0.51 0.11 192); /* teal-700 trust accent */
+}
+
+@layer base {
+  html {
+    font-family: var(--font-body);
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-heading);
+    letter-spacing: -0.01em;
+  }
+  :focus-visible {
+    outline: 3px solid var(--color-brand-teal);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer utilities {
+  .font-heading {
+    font-family: var(--font-heading);
+  }
+  .font-body {
+    font-family: var(--font-body);
+  }
+}
